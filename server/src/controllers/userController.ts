@@ -13,7 +13,7 @@ export const register = async (req: Request, res: Response) => {
       errors: parsed.error.flatten().fieldErrors,
     });
   }
-
+// ceritanya lagi berkontribusi
   const { username, email, password } = parsed.data;
 
   try {
