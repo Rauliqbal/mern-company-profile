@@ -1,5 +1,9 @@
 node_modules
 
-# Server
-server/node_modules
-server/src/generated/prisma
+# Backend
+backend/node_modules
+backend/src/generated/prisma
+
+# Frontend
+frontend/node_modules
+frontend/dist
