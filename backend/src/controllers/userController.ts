@@ -1,45 +1,30 @@
 import { Request, Response } from "express";
-import { registerSchema } from "../schemas/authSchema";
 import { errorResponse, successResponse } from "../utils/response";
-import { prisma } from "../config";
-import argon2 from "argon2";
-import jwt from "jsonwebtoken";
+import db from "../db";
+import { eq } from "drizzle-orm";
+import { userTable } from "../db/schema";
 
-export const register = async (req: Request, res: Response) => {
-  const parsed = registerSchema.safeParse(req.body);
-
-  if (!parsed.success) {
-    return res.status(400).json({
-      errors: parsed.error.flatten().fieldErrors,
-    });
-  }
-
-  const { username, email, password } = parsed.data;
-
+export const getUser = async (req: Request, res: Response) => {
   try {
-    // Check User
-    const user = await prisma.users.findUnique({
-      where: { email },
-    });
 
-    if (user) {
-      return errorResponse(res, "Account already exists ", 404);
+    if(!req.user) {
+      return errorResponse(res,"Unauthorization",401)
     }
 
-    // Hash Passowrd
-    const hashPassword = await argon2.hash(password);
+    const getUser = await db
+      .select()
+      .from(userTable)
+      .where(eq(userTable.id, req.user.id))
+      .limit(1)
+      .then(rows => rows[0]);
 
-    // Create
-    await prisma.users.create({
-      data: {
-        username,
-        email,
-        password: hashPassword,
-      },
-    });
+    if (!getUser) {
+      return errorResponse(res, "User tidak ditemukan", 404);
+    }
 
-    successResponse(res, "Register account successfully!", 200);
+    const { password, ...safeUser } = getUser;
+    return successResponse(res, "Success get user", safeUser, 200);
   } catch (error) {
-    errorResponse(res, "Error", 500);
+    return errorResponse(res, "Internal server error", 500);
   }
 };

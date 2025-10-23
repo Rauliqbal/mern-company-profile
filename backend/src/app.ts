@@ -8,7 +8,15 @@ import router from "./routes";
 const app = express();
 
 // Middlewares
+const config = {
+  origin: [
+    "http://localhost:5173"
+  ]
+}
+
+app.use(cors(config))
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(helmet());
 
