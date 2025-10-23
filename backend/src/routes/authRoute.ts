@@ -1,8 +1,8 @@
-import express from "express";
-import { login, register } from "../controllers/userController";
+import {Router} from "express";
+import { login, register } from "../controllers/authController";
 
 // Init
-const authRouter = express.Router();
+const authRouter = Router();
 
 // Routing Auth
 authRouter.post("/register", register);

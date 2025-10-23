@@ -2,7 +2,7 @@ import { pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum('role', ["ADMIN","SUPERADMIN"])
 
-export const user = pgTable("user", {
+export const userTable = pgTable("user", {
   id: varchar({ length: 255 })
     .notNull()
     .primaryKey()
