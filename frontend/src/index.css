@@ -1,7 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
+
 
 @theme {
   --color-background: #eff1f5;
+  --color-dark-background: #27223E ;
   --color-foreground: oklch(0.145 0 0);
+  --color-dark-foregound: #DBD8E9;
   --color-primary: #546fff;
+  --font-inter : "Inter", sans-serif;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+
+
+@layer base {
+ body {
+    @apply bg-background dark:bg-slate-900 text-foreground dark:text-dark-foregound font-inter transition-all duration-300;
+  }
 }
