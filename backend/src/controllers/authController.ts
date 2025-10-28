@@ -55,6 +55,9 @@ export const register = async (req: Request, res: Response) => {
       200
     );
   } catch (error) {
+    res.json({
+      error,
+    });
     errorResponse(res, "Internal server error", 500);
   }
 };
@@ -83,7 +86,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Valid password
-    const validPassword = await argon2.verify(checkUser.password, password)
+    const validPassword = await argon2.verify(checkUser.password, password);
     if (!validPassword) {
       return errorResponse(res, "Wrong password", 401);
     }
@@ -101,12 +104,12 @@ export const login = async (req: Request, res: Response) => {
     });
 
     // Set refresh token to cookies
-    res.cookie('refreshToken', refreshToken, {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: config.NODE_ENV ==='production',
+      secure: config.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge:  7 * 24 * 60 * 60 * 1000
-    })
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     // Delete password
     const { password: _, ...userWithoutPassword } = checkUser;
@@ -122,7 +125,6 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-
 // Refresh Token
 export const refreshAccessToken = async (req: Request, res: Response) => {
   const { token } = req.body;
@@ -130,10 +132,9 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
   if (!token) return errorResponse(res, "Refresh token required", 400);
 
   try {
-    const decoded = jwt.verify(
-      token,
-      config.JWT_REFRESH_TOKEN as string
-    ) as { id: string };
+    const decoded = jwt.verify(token, config.JWT_REFRESH_TOKEN as string) as {
+      id: string;
+    };
 
     // Check token on database
     const stored = await db
@@ -155,10 +156,11 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 
     const newAccessToken = generateAccessToken(userData);
 
-    successResponse(res, "Access token refreshed", { accessToken: newAccessToken });
+    successResponse(res, "Access token refreshed", {
+      accessToken: newAccessToken,
+    });
   } catch (error) {
-    console.error('ERROR', error);
+    console.error("ERROR", error);
     errorResponse(res, "Invalid or expired refresh token", 403);
   }
 };
-

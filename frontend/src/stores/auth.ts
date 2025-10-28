@@ -1,65 +1,40 @@
+// src/store/authStore.ts
 import { create } from "zustand";
 import api from "../services/api";
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
 interface AuthState {
-  user: User | null;
-  token: string | null;
-  loading: boolean;
-  error: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  user: any | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  setTokens: (access: string, refresh: string) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
+  accessToken: localStorage.getItem("accessToken"),
+  refreshToken: localStorage.getItem("refreshToken"),
   user: null,
-  token: null,
-  loading: false,
-  error: null,
 
-  login: async (email, password) => {
-    set({ loading: true, error: null });
-    try {
-      const { data } = await api.post("/auth/login", {
-        email,
-        password,
-      });
-      set({ user: data.user, token: data.token, loading: false });
-      localStorage.setItem("token", data.token);
-    } catch (err: any) {
-      set({
-        error: err.response?.data?.message || "Login failed",
-        loading: false,
-      });
-    }
+  setTokens: (access, refresh) => {
+    localStorage.setItem("accessToken", access);
+    localStorage.setItem("refreshToken", refresh);
+    set({ accessToken: access, refreshToken: refresh });
   },
 
-  register: async (name, email, password) => {
-    set({ loading: true, error: null });
-    try {
-      const { data } = await api.post("/auth/register", {
-        name,
-        email,
-        password,
-      });
-      set({ user: data.user, token: data.token, loading: false });
-      localStorage.setItem("token", data.token);
-    } catch (err: any) {
-      set({
-        error: err.response?.data?.message || "Register failed",
-        loading: false,
-      });
-    }
+  login: async (email, password) => {
+    const res = await api.post("/auth/login", { email, password });
+    const { accessToken, refreshToken, user } = res.data;
+
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+
+    set({ accessToken, refreshToken, user });
   },
 
   logout: () => {
-    set({ user: null, token: null });
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    set({ accessToken: null, refreshToken: null, user: null });
   },
 }));
