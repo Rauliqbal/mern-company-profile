@@ -1,8 +1,10 @@
 // src/pages/Login.tsx
 import { useState } from "react";
 import { useAuthStore } from "../stores/auth";
+import { useNavigate } from "react-router";
 
 export default function Login() {
+  const navigate = useNavigate();
   const { login } = useAuthStore();
   const [email, setEmail] = useState("raul.iqbal@vensys.co.id");
   const [password, setPassword] = useState("@Rauliqbal");
@@ -12,7 +14,7 @@ export default function Login() {
     e.preventDefault();
     try {
       await login(email, password);
-      window.location.href = "/dashboard";
+      navigate("/dashboard")
     } catch {
       setError("Email atau password salah");
     }

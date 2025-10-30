@@ -40,6 +40,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
         return api(originalRequest);
       } catch (err) {
+        console.error(err);
         logout();
       }
     }

@@ -116,9 +116,7 @@ export const login = async (req: Request, res: Response) => {
 
     return successResponse(res, "Login successful!", {
       user: userWithoutPassword,
-      tokens: {
-        accessToken,
-      },
+      accessToken,
     });
   } catch (error) {
     errorResponse(res, "Internal server error", 500);
