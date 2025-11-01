@@ -6,7 +6,11 @@ import jwt from "jsonwebtoken";
 import db from "../db";
 import { eq } from "drizzle-orm";
 import { refreshTokenTable, userTable } from "../db/schema";
-import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefeshToken,
+} from "../utils/jwt";
 import config from "../config";
 
 // REGISTER USER
@@ -123,6 +127,32 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+// LOGOUT USER
+export const logout = async (req: Request, res: Response) => {
+  const token = req.cookies.refreshToken;
+
+  if (!token) {
+    return res.status(401).json({ message: "No refresh token" });
+  }
+  try {
+    const payload = verifyRefeshToken(token) as any;
+
+    console.log(payload);
+
+    await db
+      .delete(refreshTokenTable)
+      .where(eq(refreshTokenTable.userId, payload.id))
+      .then((rows) => rows[0]);
+
+    // remove refresh token cookies
+    // res.clearCookie("refresh_token");
+
+    res.json({ message: "Logged out successfully" });
+  } catch {
+    res.status(403).json({ message: "Invalid token" });
+  }
+};
+
 // Refresh Token
 export const refreshAccessToken = async (req: Request, res: Response) => {
   const { token } = req.body;
@@ -130,9 +160,10 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
   if (!token) return errorResponse(res, "Refresh token required", 400);
 
   try {
-    const decoded = jwt.verify(token, config.JWT_REFRESH_TOKEN as string) as {
-      id: string;
-    };
+    // const decoded = jwt.verify(token, config.JWT_REFRESH_TOKEN as string) as {
+    //   id: string;
+    // };
+    const decoded = verifyRefeshToken(token) as { id: string };
 
     // Check token on database
     const stored = await db

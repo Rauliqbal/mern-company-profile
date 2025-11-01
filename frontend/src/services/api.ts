@@ -9,12 +9,14 @@ const api = axios.create({
   },
 });
 
+// Attach accessToken
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
+// Auto refresh token if expired
 api.interceptors.response.use(
   (response) => response,
   async (error) => {

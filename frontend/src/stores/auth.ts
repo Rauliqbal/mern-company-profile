@@ -10,32 +10,44 @@ interface User {
 }
 
 interface AuthState {
-  accessToken: string | null;
-  refreshToken: string | null;
   user: User | null;
+  accessToken: string | null;
+  loading: boolean;
+  error: string | null;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  setTokens: (access: string, refresh: string) => void;
+  logout: () => Promise<void>;
+  setTokens: (access: string) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
+  // STATE
   accessToken: localStorage.getItem("accessToken"),
   refreshToken: localStorage.getItem("refreshToken"),
   user: null,
 
+  // ACTIONS
   setTokens: (access) => {
     localStorage.setItem("accessToken", access);
     set({ accessToken: access });
   },
 
   login: async (email, password) => {
-    const res = await api.post("/auth/login", { email, password });
-    const user = res.data.data.user;
-    const accessToken = res.data.data.accessToken;
+    set({ loading: true, error: null });
 
-    localStorage.setItem("accessToken", accessToken);
+    try {
+      const { data } = await api.post("/auth/login", { email, password });
+      const user = data.user;
+      const accessToken = data.accessToken;
 
-    set({ user, accessToken });
+      // localStorage.setItem("accessToken", accessToken);
+
+      set({ user, accessToken });
+    } catch (error: any) {
+      set({
+        error: error.response?.data?.message || "Login Failed",
+        loading: false,
+      });
+    }
   },
 
   logout: () => {
