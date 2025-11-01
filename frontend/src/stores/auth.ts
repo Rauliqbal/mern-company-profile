@@ -14,6 +14,7 @@ interface AuthState {
   accessToken: string | null;
   loading: boolean;
   error: string | null;
+
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   setTokens: (access: string) => void;
@@ -39,8 +40,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       const user = data.user;
       const accessToken = data.accessToken;
 
-      // localStorage.setItem("accessToken", accessToken);
-
       set({ user, accessToken });
     } catch (error: any) {
       set({
@@ -50,9 +49,15 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  logout: () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    set({ accessToken: null, refreshToken: null, user: null });
+  logout: async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      // Clear client-side token & user
+      localStorage.removeItem("accessToken");
+      set({ user: null, accessToken: null, loading: false, error: null });
+    }
   },
 }));

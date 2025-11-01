@@ -141,11 +141,10 @@ export const logout = async (req: Request, res: Response) => {
 
     await db
       .delete(refreshTokenTable)
-      .where(eq(refreshTokenTable.userId, payload.id))
-      .then((rows) => rows[0]);
+      .where(eq(refreshTokenTable.userId, payload.id));
 
     // remove refresh token cookies
-    // res.clearCookie("refresh_token");
+    res.clearCookie("refreshToken");
 
     res.json({ message: "Logged out successfully" });
   } catch {
