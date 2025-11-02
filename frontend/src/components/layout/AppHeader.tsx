@@ -1,7 +1,8 @@
+import { useUserStore } from "../../stores/user";
 import ThemeToggle from "../ThemeToggle";
 
 export default function AppHeader() {
-  
+   const { user } = useUserStore()
    return (
       <div className="sticky p-5 lg:absolute inset-x-4 top-4 bg-white dark:bg-slate-800 rounded-3xl">
          <div className="flex items-center justify-end gap-4 lg:justify-between">
@@ -32,15 +33,15 @@ export default function AppHeader() {
                <ThemeToggle />
                <div className="h-12 bg-gray-300 dark:bg-gray-700 w-[1px]"></div>
                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="flex flex-col items-end">
-                     <p className="text-sm">Hello👋🏻</p>
-                     {/* <h6 className="text-sm font-bold">{user?.name}</h6> */}
+                  <div className="flex flex-col text-right">
+                     <p className="text-sm text-gray-400">Hello</p>
+                     <h6 className="text-sm font-bold">{user?.name}</h6>
                   </div>
-                  {/* <img
+                  <img
                      className="w-12"
                      src="https://avatar.iran.liara.run/public/boy"
                      alt={`photo ${user?.name}`}
-                  /> */}
+                  />
                </div>
             </div>
          </div>

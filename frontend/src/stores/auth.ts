@@ -1,63 +1,40 @@
-// src/store/authStore.ts
+// src/stores/auth.ts
 import { create } from "zustand";
 import api from "../services/api";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
-
 interface AuthState {
-  user: User | null;
   accessToken: string | null;
   loading: boolean;
-  error: string | null;
 
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  setTokens: (access: string) => void;
+  isAuthenticated: () => boolean;
+  setAccessToken: (token: string) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  // STATE
+export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: localStorage.getItem("accessToken"),
-  refreshToken: localStorage.getItem("refreshToken"),
-  user: null,
-
-  // ACTIONS
-  setTokens: (access) => {
-    localStorage.setItem("accessToken", access);
-    set({ accessToken: access });
-  },
+  loading: false,
 
   login: async (email, password) => {
-    set({ loading: true, error: null });
+    const { data } = await api.post(
+      "/auth/login",
+      { email, password },
+      { withCredentials: true }
+    );
+    localStorage.setItem("accessToken", data.data.accessToken);
+    set({ accessToken: data.data.accessToken });
+  },
 
-    try {
-      const { data } = await api.post("/auth/login", { email, password });
-      const user = data.user;
-      const accessToken = data.accessToken;
-
-      set({ user, accessToken });
-    } catch (error: any) {
-      set({
-        error: error.response?.data?.message || "Login Failed",
-        loading: false,
-      });
-    }
+  setAccessToken: (token: string | null) => {
+    set({ accessToken: token });
   },
 
   logout: async () => {
-    try {
-      await api.post("/auth/logout");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    } finally {
-      // Clear client-side token & user
-      localStorage.removeItem("accessToken");
-      set({ user: null, accessToken: null, loading: false, error: null });
-    }
+    await api.post("/auth/logout", {}, { withCredentials: true });
+    localStorage.removeItem("accessToken");
+    set({ accessToken: null });
   },
+
+  isAuthenticated: () => !!get().accessToken,
 }));

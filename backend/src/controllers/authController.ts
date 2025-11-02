@@ -154,9 +154,10 @@ export const logout = async (req: Request, res: Response) => {
 
 // Refresh Token
 export const refreshAccessToken = async (req: Request, res: Response) => {
-  const { token } = req.body;
+  const token = req.cookies.refreshToken;
 
-  if (!token) return errorResponse(res, "Refresh token required", 400);
+  console.log(token);
+  if (!token) return res.sendStatus(401);
 
   try {
     // const decoded = jwt.verify(token, config.JWT_REFRESH_TOKEN as string) as {

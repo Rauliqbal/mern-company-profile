@@ -3,11 +3,16 @@ import { useEffect } from "react";
 import { useUserStore } from "../../stores/user";
 
 export default function Dashboard() {
-  const { user, getUser } = useUserStore()
+  const { user, fetchUser, isLoading } = useUserStore();
 
   useEffect(() => {
-    void getUser()
-  }, [])
+    if (!user) {
+      void fetchUser();
+    }
+  }, [fetchUser, user]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (!user) return <p>Not logged in</p>;
   return (
     <div className="px-0 lg:px-6">
       <h1 className="text-xl">Welcome,{user?.name}</h1>

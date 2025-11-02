@@ -11,7 +11,8 @@ const api = axios.create({
 
 // Attach accessToken
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken;
+  const token =
+    useAuthStore.getState().accessToken || localStorage.getItem("accessToken");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -21,32 +22,40 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    const { refreshToken, setTokens, logout } = useAuthStore.getState();
+    const authStore = useAuthStore.getState();
 
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      refreshToken
-    ) {
+    // if unauthorized (token expired)
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+
       try {
-        const res = await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/refresh`,
-          { refreshToken },
+        const { data } = await axios.post(
+          `${
+            import.meta.env.VITE_API_URL || "http://localhost:8000/api"
+          }/auth/refresh`,
+          {},
           { withCredentials: true }
         );
 
-        setTokens(res.data.accessToken, res.data.refreshToken);
+        const newAccessToken = data.data?.accessToken || data.data.accessToken;
+        if (!newAccessToken)
+          throw new Error("No access token returned from refresh");
 
-        // update header dan ulangi request
-        originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
+        // Update store + localStorage
+        authStore.setAccessToken(newAccessToken);
+        localStorage.setItem("accessToken", newAccessToken);
+
+        // Update Authorization header dan retry request
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
-      } catch (err) {
-        console.error(err);
-        logout();
+      } catch (refreshError) {
+        // if refresh failed, logout user
+        authStore.logout();
+        localStorage.removeItem("accessToken");
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
       }
     }
-
     return Promise.reject(error);
   }
 );
