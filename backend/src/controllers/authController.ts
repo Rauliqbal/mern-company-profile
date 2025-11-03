@@ -26,7 +26,7 @@ export const register = async (req: Request, res: Response) => {
   const { name, email, password } = parsed.data;
 
   try {
-    // Check User
+    // check the same email user
     const checkUser = await db
       .select()
       .from(userTable)
@@ -78,8 +78,7 @@ export const login = async (req: Request, res: Response) => {
 
   const { email, password } = parsed.data;
 
-  try {
-    // Check user
+  // check user if not there 
     const checkUser = await db
       .select()
       .from(userTable)
@@ -107,7 +106,7 @@ export const login = async (req: Request, res: Response) => {
       expiresAt,
     });
 
-    // Set refresh token to cookies
+    // set refresh token to cookies
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: config.NODE_ENV === "production",
@@ -115,16 +114,13 @@ export const login = async (req: Request, res: Response) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // Delete password
+    // delete password
     const { password: _, ...userWithoutPassword } = checkUser;
 
     return successResponse(res, "Login successful!", {
       user: userWithoutPassword,
       accessToken,
     });
-  } catch (error) {
-    errorResponse(res, "Internal server error", 500);
-  }
 };
 
 // LOGOUT USER
@@ -160,12 +156,9 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
   if (!token) return res.sendStatus(401);
 
   try {
-    // const decoded = jwt.verify(token, config.JWT_REFRESH_TOKEN as string) as {
-    //   id: string;
-    // };
     const decoded = verifyRefeshToken(token) as { id: string };
 
-    // Check token on database
+    // check token on database
     const stored = await db
       .select()
       .from(refreshTokenTable)

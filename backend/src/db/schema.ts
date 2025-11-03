@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", ["ADMIN", "SUPERADMIN"]);
 
@@ -35,3 +35,15 @@ export const refreshTokenTable = pgTable("refresh_token", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+
+export const serviceTable = pgTable('services', {
+  title: varchar({length: 36}).notNull(),
+  descrption: text().notNull(),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date())
+    .notNull(),
+})
