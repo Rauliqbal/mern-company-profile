@@ -25,45 +25,36 @@ export const register = async (req: Request, res: Response) => {
 
   const { name, email, password } = parsed.data;
 
-  try {
-    // check the same email user
-    const checkUser = await db
-      .select()
-      .from(userTable)
-      .where(eq(userTable.email, email))
-      .then((rows) => rows[0]);
-    if (checkUser) {
-      return errorResponse(res, "Account already exists", 400);
-    }
+  // check the same email user
+  const checkUser = await db
+    .select()
+    .from(userTable)
+    .where(eq(userTable.email, email))
+    .then((rows) => rows[0]);
+  if (checkUser) return errorResponse(res, "Account already exists", 400);
 
-    // Hash Password
-    const hashPassword = await argon2.hash(password);
+  // Hash Password
+  const hashPassword = await argon2.hash(password);
 
-    // Create new user
-    const create = await db
-      .insert(userTable)
-      .values({
-        name,
-        email,
-        password: hashPassword,
-      })
-      .returning()
-      .then((rows) => rows[0]);
+  // create new user
+  const create = await db
+    .insert(userTable)
+    .values({
+      name,
+      email,
+      password: hashPassword,
+    })
+    .returning()
+    .then((rows) => rows[0]);
 
-    const { password: _, ...userWithoutPassword } = create;
+  const { password: _, ...userWithoutPassword } = create;
 
-    successResponse(
-      res,
-      "Register account successfully!",
-      userWithoutPassword,
-      200
-    );
-  } catch (error) {
-    res.json({
-      error,
-    });
-    errorResponse(res, "Internal server error", 500);
-  }
+  return successResponse(
+    res,
+    "Register account successfully!",
+    userWithoutPassword,
+    200
+  );
 };
 
 // LOGIN USER
@@ -78,49 +69,49 @@ export const login = async (req: Request, res: Response) => {
 
   const { email, password } = parsed.data;
 
-  // check user if not there 
-    const checkUser = await db
-      .select()
-      .from(userTable)
-      .where(eq(userTable.email, email))
-      .then((rows) => rows[0]);
-    if (!checkUser) {
-      return errorResponse(res, "Account not found", 404);
-    }
+  // check user if not there
+  const checkUser = await db
+    .select()
+    .from(userTable)
+    .where(eq(userTable.email, email))
+    .then((rows) => rows[0]);
+  if (!checkUser) {
+    return errorResponse(res, "Account not found", 404);
+  }
 
-    // Valid password
-    const validPassword = await argon2.verify(checkUser.password, password);
-    if (!validPassword) {
-      return errorResponse(res, "Wrong password", 401);
-    }
+  // Valid password
+  const validPassword = await argon2.verify(checkUser.password, password);
+  if (!validPassword) {
+    return errorResponse(res, "Wrong password", 401);
+  }
 
-    // Generate Token
-    const accessToken = generateAccessToken(checkUser);
-    const refreshToken = generateRefreshToken(checkUser);
+  // Generate Token
+  const accessToken = generateAccessToken(checkUser);
+  const refreshToken = generateRefreshToken(checkUser);
 
-    // Save Refresh Token DB
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    await db.insert(refreshTokenTable).values({
-      token: refreshToken,
-      userId: checkUser.id,
-      expiresAt,
-    });
+  // Save Refresh Token DB
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  await db.insert(refreshTokenTable).values({
+    token: refreshToken,
+    userId: checkUser.id,
+    expiresAt,
+  });
 
-    // set refresh token to cookies
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: config.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+  // set refresh token to cookies
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: config.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
 
-    // delete password
-    const { password: _, ...userWithoutPassword } = checkUser;
+  // delete password
+  const { password: _, ...userWithoutPassword } = checkUser;
 
-    return successResponse(res, "Login successful!", {
-      user: userWithoutPassword,
-      accessToken,
-    });
+  return successResponse(res, "Login successful!", {
+    user: userWithoutPassword,
+    accessToken,
+  });
 };
 
 // LOGOUT USER
