@@ -36,14 +36,19 @@ export const refreshTokenTable = pgTable("refresh_token", {
     .notNull(),
 });
 
-export const serviceTable = pgTable('services', {
-  title: varchar({length: 36}).notNull(),
-  descrption: text().notNull(),
-  createdAt: timestamp("created_at")
+export const serviceTable = pgTable("services", {
+  id: varchar({ length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: varchar({ length: 36 }).notNull(),
+  image: varchar().notNull(),
+  description: text().notNull(),
+  createdAt: timestamp("created_at") 
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   updatedAt: timestamp("updated_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date())
     .notNull(),
-})
+});
