@@ -97,3 +97,24 @@ export const updateUser = async (req: Request, res: Response) => {
     200
   );
 };
+
+// DELETE USER
+export const deleteUser = async (req:Request, res:Response) => {
+  const {id} = req.params
+
+  // check user if not there
+  const checkUser = await db
+    .select()
+    .from(userTable)
+    .where(eq(userTable.id, id))
+    .then((rows) => rows[0]);
+  if (!checkUser) {
+    return errorResponse(res, "Account not found", 400);
+  }
+
+  // delete user
+  await db.delete(userTable).where(eq(userTable.id,id))
+
+  return successResponse(res, "Delete account successfully",200)
+  
+}
