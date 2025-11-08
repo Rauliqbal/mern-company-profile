@@ -5,10 +5,10 @@ import upload from '../utils/multer'
 
 const serviceRoute = Router()
 
-serviceRoute.post('/', verifyToken, upload.single('image'),createService)
+serviceRoute.post('/', verifyToken, upload.single('imageUrl'),createService)
 serviceRoute.get('/', getServices)
 serviceRoute.get("/:id", getDetailService)
-serviceRoute.put("/:id", verifyToken,upload.single('image'), updateService)
+serviceRoute.put("/:id", verifyToken,upload.single('imageUrl'), updateService)
 serviceRoute.delete("/:id", verifyToken, deleteService)
 
 export default serviceRoute
