@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useAuthStore } from "../stores/auth";
 import { useNavigate } from "react-router";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -22,24 +24,19 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <form onSubmit={handleSubmit} className="p-4 border rounded">
-        <h2 className="text-lg font-bold mb-3">Login</h2>
-        <input
-          className="border p-2 mb-2 w-full"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          className="border p-2 mb-2 w-full"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+      <form onSubmit={handleSubmit} className="max-w-2xl p-4 md:p-6 lg:p-10 border rounded-xl bg-white">
+        <h2 className="text-2xl font-bold mb-2">CMS Dashboard Login</h2>
+        <p className="text-gray-400">Access your content management system.</p>
+      <div className="mt-6">
+        <label className="text-sm" htmlFor="email">Email</label>
+        <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com"/>
+      </div>
+      <div className="mt-5">
+        <label className="text-sm" htmlFor="password">Password</label>
+        <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="john@example.com"/>
+      </div>
         {error && <p className="text-red-500">{error}</p>}
-        <button className="bg-blue-500 text-white p-2 w-full">Login</button>
+        <Button className="w-full mt-4" type="submit">Sign in</Button>
       </form>
     </div>
   );
