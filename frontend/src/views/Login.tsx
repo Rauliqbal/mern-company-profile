@@ -4,23 +4,26 @@ import { useAuthStore } from "../stores/auth";
 import { useNavigate } from "react-router";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuthStore();
   const [email, setEmail] = useState("raul.iqbal@vensys.co.id");
   const [password, setPassword] = useState("@Rauliqbal");
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await login(email, password);
       navigate("/dashboard")
+      toast.success("Sign in was successful")
     } catch {
-      setError("Email atau password salah");
+      toast.error("Incorrect email or password!")
     }
   };
+
+
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -35,7 +38,6 @@ export default function Login() {
         <label className="text-sm" htmlFor="password">Password</label>
         <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="john@example.com"/>
       </div>
-        {error && <p className="text-red-500">{error}</p>}
         <Button className="w-full mt-4" type="submit">Sign in</Button>
       </form>
     </div>

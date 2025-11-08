@@ -82,7 +82,7 @@ export const login = async (req: Request, res: Response) => {
   // Valid password
   const validPassword = await argon2.verify(checkUser.password, password);
   if (!validPassword) {
-    return errorResponse(res, "Wrong password", 401);
+    return errorResponse(res, "Wrong password", 404);
   }
 
   // Generate Token
