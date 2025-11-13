@@ -93,8 +93,8 @@ export default function AppSidebar() {
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
                         isActive
-                          ? "after:absolute after:content-[''] after:w-1.5 after:h-7 after:rounded-l-lg after:bg-primary after:right-0 relative flex items-center py-3 px-4 gap-3 rounded-lg text-primary dark:hover:text-black dark:text-black bg-primary/20 hover:bg-primary/40 ring-0 ring-gray-200 dark:ring-slate-700 transition duration-300"
-                          : "flex items-center py-3 px-4 gap-3 rounded-lg dark:text-white dark:hover:text-black hover:bg-primary/20 hover:ring-0 ring-1 ring-gray-200 dark:ring-slate-700 transition duration-300"
+                          ? "after:absolute after:content-[''] after:w-1.5 after:h-7 after:rounded-l-lg after:bg-primary after:right-0 relative flex items-center py-3 px-4 gap-3 rounded-xl text-primary dark:hover:text-black dark:text-black bg-primary/20 hover:bg-primary/40 ring-0 ring-gray-200 dark:ring-slate-700 transition duration-300"
+                          : "flex items-center py-3 px-4 gap-3 rounded-xl dark:text-white dark:hover:text-black hover:bg-primary/20 hover:ring-0 ring-1 ring-gray-200 dark:ring-slate-700 transition duration-300"
                       }
                     >
                       <IconComponent size={20} />

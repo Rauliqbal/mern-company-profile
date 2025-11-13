@@ -1,7 +1,14 @@
 import { Button } from "@/components/ui/button";
+import { useServiceStore } from "@/stores/service";
 import { CirclePlus } from "lucide-react";
+import { useEffect } from "react";
 
 export default function Service() {
+  const { service, fetchService } = useServiceStore();
+
+  useEffect(() => {
+    fetchService();
+  }, [fetchService]);
   return (
     <div className="bg-white rounded-3xl dark:bg-background p-5">
       {/* Header and Button */}
@@ -20,7 +27,17 @@ export default function Service() {
       <hr />
 
       {/* Content Dashboard */}
-      <div></div>
+      <article>
+        {service?.length === 0 ? (
+          <p>Kosong</p>
+        ): (
+          <ul>
+            {service?.map((item) => (
+            <li key={item.id}>{item.title}</li>
+          ))}
+          </ul>
+        )}
+      </article>
     </div>
   );
 }

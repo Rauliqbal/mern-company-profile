@@ -22,9 +22,6 @@ export default function Login() {
       toast.error("Incorrect email or password!")
     }
   };
-
-
-
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <form onSubmit={handleSubmit} className="max-w-2xl p-4 md:p-6 lg:p-10 border rounded-xl bg-white">
