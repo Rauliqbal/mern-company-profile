@@ -12,7 +12,7 @@ export default function AppSidebar() {
   // Menu List
   const sidebarMenu = [
     {
-      title: "GENERAL",
+      title: "Main Menu",
       items: [
         { label: "Overview", path: "/dashboard", icon: "Box" },
         { label: "Services", path: "/dashboard/service", icon: "Wrench" },
@@ -20,7 +20,7 @@ export default function AppSidebar() {
       ],
     },
     {
-      title: "OTHER",
+      title: "Other",
       items: [
         { label: "Users", path: "/dashboard/users", icon: "User" },
         { label: "Settings", path: "/dashboard/settings", icon: "Settings" },
@@ -43,7 +43,7 @@ export default function AppSidebar() {
         </button>
       </div>
       <div
-        className={`h-screen w-80 overflow-y-hidden absolute left-0 top-0 z-20 transition-all duration-300 lg:static  bg-white dark:bg-slate-800  ${expanded
+        className={`h-screen w-80 overflow-y-hidden absolute left-0 top-0 z-20 transition-all duration-300 lg:static  bg-white dark:bg-slate-800 border-r border-gray-200 ${expanded
           ? "-translate-x-full lg:translate-x-0 "
           : "lg:-translate-x-full translate-x-0 shadow-xl"
           }`}
@@ -74,7 +74,7 @@ export default function AppSidebar() {
 
           {sidebarMenu.map((section) => (
             <div key={section.title} className="mt-8 px-8">
-              <h6 className="font-semibold dark:text-white mb-2">
+              <h6 className="font-semibold text-black/50 dark:text-white mb-2">
                 {section.title}
               </h6>
 
@@ -91,8 +91,8 @@ export default function AppSidebar() {
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
                         isActive
-                          ? "flex items-center py-3 px-4 gap-3 rounded-full dark:hover:text-black dark:text-black bg-[#FFd88d] hover:bg-[#FFD88D]  ring-0 ring-[#e2e8f0] dark:ring-slate-700 transition duration-300"
-                          : "flex items-center py-3 px-4 gap-3 rounded-full dark:text-white dark:hover:text-black hover:bg-[#FFD88D] hover:ring-0 ring-1 ring-[#e2e8f0] dark:ring-slate-700 transition duration-300"
+                          ? "after:absolute after:content-[''] after:w-1.5 after:h-7 after:rounded-l-lg after:bg-primary after:right-0 relative flex items-center py-3 px-4 gap-3 rounded-lg text-primary dark:hover:text-black dark:text-black bg-primary/20 hover:bg-primary/40 ring-0 ring-gray-200 dark:ring-slate-700 transition duration-300"
+                          : "flex items-center py-3 px-4 gap-3 rounded-lg dark:text-white dark:hover:text-black hover:bg-primary/20 hover:ring-0 ring-1 ring-gray-200 dark:ring-slate-700 transition duration-300"
                       }
                     >
                       <IconComponent size={20} />
@@ -110,7 +110,7 @@ export default function AppSidebar() {
             <div className="flex flex-col gap-4">
               <button
                 onClick={handleLogout}
-                className="flex items-center py-3 px-4 gap-3 rounded-full dark:hover:text-black hover:bg-[#FFD88D] hover:ring-0 ring-1 ring-[#e2e8f0]  dark:ring-slate-700 transition duration-300"
+                className="flex items-center py-3 px-4 gap-3 rounded-full dark:hover:text-black hover:bg-primary-hover hover:ring-0 ring-1 ring-gray-200  dark:ring-slate-700 transition duration-300"
               >
                 <Box size="24" />
 

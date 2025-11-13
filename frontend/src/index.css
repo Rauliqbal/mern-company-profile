@@ -5,7 +5,7 @@
 @theme {
   --color-foreground: oklch(0.145 0 0);
   --color-dark-foregound: #DBD8E9;
-  /* --color-primary: #546fff; */
+  --color-primary-hover: #4c5fae;
   --font-inter : "Inter", sans-serif;
 }
 
@@ -55,7 +55,7 @@
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
+  --primary: #1053D5;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
