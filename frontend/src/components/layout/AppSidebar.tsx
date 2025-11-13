@@ -34,6 +34,7 @@ export default function AppSidebar() {
   }
   return (
     <>
+      {/* Button Toggle */}
       <div className=" absolute left-8 top-[60px]  md:left-16 z-10 lg:hidden">
         <button
           onClick={() => setExpanded((curr) => !curr)}
@@ -42,8 +43,9 @@ export default function AppSidebar() {
           <Box size="24" />
         </button>
       </div>
+      {/* Sidebar Menu */}
       <div
-        className={`h-screen w-80 overflow-y-hidden absolute left-0 top-0 z-20 transition-all duration-300 lg:static  bg-white dark:bg-slate-800 border-r border-gray-200 ${expanded
+        className={`h-screen w-80 overflow-y-hidden absolute left-0 top-0 z-20 transition-all duration-300 lg:static  bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-gray-700 ${expanded
           ? "-translate-x-full lg:translate-x-0 "
           : "lg:-translate-x-full translate-x-0 shadow-xl"
           }`}

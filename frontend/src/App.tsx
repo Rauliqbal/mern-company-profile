@@ -11,6 +11,7 @@ import GuestRoute from "./components/GuestRoute";
 import { useUserStore } from "./stores/user";
 import { useAuthStore } from "./stores/auth";
 import { useEffect } from "react";
+import Product from "./views/dashboard/Product";
 
 
 function App() {
@@ -29,7 +30,8 @@ function App() {
         <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/users" element={<Users />} />
-          <Route path="/dashboard/Service" element={<Service />} />
+          <Route path="/dashboard/service" element={<Service />} />
+          <Route path="/dashboard/product" element={<Product />} />
         </Route>
 
         {/* Public Route */}

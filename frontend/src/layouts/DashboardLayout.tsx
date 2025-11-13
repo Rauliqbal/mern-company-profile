@@ -16,7 +16,7 @@ const DashboardLayout: React.FC = () => {
           <AppHeader />
 
           {/* Main Content */}
-          <div className="mt-28">
+          <div className="mt-18">
             <Outlet />
           </div>
         </div>

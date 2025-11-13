@@ -4,7 +4,7 @@ import ThemeToggle from "../ThemeToggle";
 export default function AppHeader() {
    const { user } = useUserStore()
    return (
-      <div className="sticky p-5 lg:absolute top-0 inset-x-0 bg-white dark:bg-slate-800 border-b border-gray-200">
+      <div className="sticky p-5 lg:absolute top-0 inset-x-0 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
          <div className="flex items-center justify-end gap-4 lg:justify-between">
             <div className="relative hidden lg:block">
                <input
