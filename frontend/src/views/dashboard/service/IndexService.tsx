@@ -62,7 +62,7 @@ export default function IndexService() {
                     {formatDate(service.createdAt)}
                   </p>
 
-                  <Link to={`/service/${service.id}`}>
+                  <Link to={`/dashboard/service/${service.id}`}>
                     <Button variant={"secondary"}>Edit Service</Button>
                   </Link>
                 </div>
