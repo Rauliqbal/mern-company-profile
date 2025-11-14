@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useServiceStore } from "@/stores/service";
-import { ArrowLeft, FileText, Upload } from "lucide-react";
+import { ArrowLeft, FileText, LucideTrash2, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -11,6 +11,7 @@ export default function CreateService() {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [preview, setPreview] = useState<string | null>(null);
   const { createService } = useServiceStore();
   const navigate = useNavigate();
 
@@ -20,19 +21,24 @@ export default function CreateService() {
   // event handler input select
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
-    if (selectedFile) { 
-        if (selectedFile.size > max_file) { 
-            toast.error(
-                "The maximum file size is 2MB. Please select a smaller file."
-            );
-            if (fileInputRef.current) {
-                fileInputRef.current.value = "";
-            }
-            return;
+    if (selectedFile) {
+      if (selectedFile.size > max_file) {
+        toast.error(
+          "The maximum file size is 2MB. Please select a smaller file."
+        );
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
         }
-        setFile(selectedFile);
+        setFile(null);
+        setPreview(null);
+        return;
+      }
+      const url = URL.createObjectURL(selectedFile);
+
+      setFile(selectedFile);
+      setPreview(url);
     }
-};
+  };
 
   // handle click image input
   const handleButtonClick = () => {
@@ -61,16 +67,22 @@ export default function CreateService() {
     setIsDragging(false);
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile.size > max_file) {
-      toast.error("The maximum file size is 2MB. Please select a smaller file.")
-      return
+      toast.error(
+        "The maximum file size is 2MB. Please select a smaller file."
+      );
+      return;
     }
+    const url = URL.createObjectURL(droppedFile);
 
-      setFile(droppedFile);
-
+    setFile(droppedFile);
+    setPreview(url);
   };
 
   // Function for delete file has input
   const removeFile = () => {
+    if (preview) {
+      URL.revokeObjectURL(preview);
+    }
     setFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -147,20 +159,32 @@ export default function CreateService() {
 
             {file ? (
               //  View file Image
-              <div className="p-4 border border-gray-300 rounded-lg flex justify-between items-center bg-gray-50">
-                <div className="flex items-center space-x-3">
-                  <FileText className="w-6 h-6 text-indigo-500" />
-                  <span className="text-sm font-medium text-gray-700 truncate">
-                    {file.name}
-                  </span>
+              <div className="max-w-80 mt-1">
+                <div className=" p-4 border border-gray-300 rounded-lg  bg-gray-50 dark:bg-input/40 dark:border-input">
+                  {preview && (
+                    <img
+                      src={preview}
+                      alt="File Preview"
+                      className="aspect-[4/3] object-cover rounded-md"
+                    />
+                  )}
+                  <div className="flex gap-4 items-center justify-between  mt-4">
+                    <div className="flex items-center space-x-2">
+                      <FileText className="w-6 h-6 text-indigo-500" />
+                      <span className="text-sm font-medium truncate">
+                        {file.name}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={removeFile}
+                      className="text-sm font-medium text-red-600 hover:text-red-800"
+                    >
+                      {/* <span>Hapus</span> */}
+                      <LucideTrash2 />
+                    </button>
+                  </div>
                 </div>
-                <button
-                  type="button" // Penting untuk mencegah submit form
-                  onClick={removeFile}
-                  className="text-sm font-medium text-red-600 hover:text-red-800"
-                >
-                  Hapus
-                </button>
               </div>
             ) : (
               // Dropzone (Drag and Drop Area)
@@ -172,20 +196,20 @@ export default function CreateService() {
                 onDrop={handleDrop}
                 className={`
                   flex mt-1 flex-col items-center justify-center p-12 border-2 border-dashed rounded-lg 
-                  cursor-pointer transition-colors duration-300 h-48
+                  cursor-pointer dark:bg-input/30 transition-colors duration-300 h-48
                   ${
                     isDragging
                       ? "border-indigo-500 bg-indigo-50"
-                      : "border-gray-300 hover:border-indigo-400 hover:bg-gray-50"
+                      : "border-gray-300 dark:hover:bg-gray-800/50 dark:border-input hover:border-indigo-400 hover:bg-gray-50"
                   }
                 `}
               >
                 <Upload className="w-10 h-10 text-gray-400 mb-3" />
                 <p className="mb-1 text-sm text-gray-500 text-center">
-                  <span className="font-semibold text-indigo-600  ">
-                    Click to upload
+                  <span className="font-semibold text-indigo-600 ">
+                    Click to upload 
                   </span>{" "}
-                  or drag and drop
+                   or drag and drop
                 </p>
                 <p className="text-xs text-gray-500 text-center">
                   JPG, PNG, SVG or WEBP (MAX. 800x400px)
