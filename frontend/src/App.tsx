@@ -5,13 +5,14 @@ import Register from './views/Register';
 import Dashboard from './views/dashboard/Dashboard';
 import DashboardLayout from "./layouts/DashboardLayout";
 import Users from "./views/dashboard/Users";
-import Service from "./views/dashboard/Service";
 import ProtectedRoute from "./components/ProtectedRoute";
 import GuestRoute from "./components/GuestRoute";
 import { useUserStore } from "./stores/user";
 import { useAuthStore } from "./stores/auth";
 import { useEffect } from "react";
 import Product from "./views/dashboard/Product";
+import IndexService from "./views/dashboard/service/IndexService";
+import CreateService from "./views/dashboard/service/CreateService";
 
 
 function App() {
@@ -30,7 +31,8 @@ function App() {
         <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/users" element={<Users />} />
-          <Route path="/dashboard/service" element={<Service />} />
+          <Route path="/dashboard/service" element={<IndexService />} />
+          <Route path="/dashboard/create-service" element={<CreateService />} />
           <Route path="/dashboard/product" element={<Product />} />
         </Route>
 

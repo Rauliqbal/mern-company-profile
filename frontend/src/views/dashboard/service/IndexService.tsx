@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { config } from "@/config";
 import { useServiceStore } from "@/stores/service";
 import { CirclePlus } from "lucide-react";
 import { useEffect } from "react";
+import { Link, NavLink } from "react-router";
 
-export default function Service() {
+export default function IndexService() {
   const { service, fetchService } = useServiceStore();
 
   useEffect(() => {
@@ -19,9 +21,11 @@ export default function Service() {
           <p className="text-gray-400 mt-2">View and Update Company Services</p>
         </div>
         {/* Button Create */}
-        <Button>
-          Add new <CirclePlus />
-        </Button>
+        <NavLink to="/dashboard/create-service">
+          <Button>
+            Add new <CirclePlus />
+          </Button>
+        </NavLink>
       </div>
 
       <hr />
@@ -30,12 +34,20 @@ export default function Service() {
       <article>
         {service?.length === 0 ? (
           <p>Kosong</p>
-        ): (
-          <ul>
-            {service?.map((item) => (
-            <li key={item.id}>{item.title}</li>
-          ))}
-          </ul>
+        ) : (
+          <div className="grid grid-cols-1 gap-4">
+            {service?.map((service) => (
+              <div key={service.id} className="flex items-center gap-4">
+                <img
+                className="aspect-square max-w-20 rounded-xl"
+                  src={`${config.API_URL}${service.imageUrl}`}
+                  alt={`cover ${service.title}`}
+                />
+                <p>{service.title}</p>
+              </div>
+              // <li key={item.id}>{item.title}</li>
+            ))}
+          </div>
         )}
       </article>
     </div>

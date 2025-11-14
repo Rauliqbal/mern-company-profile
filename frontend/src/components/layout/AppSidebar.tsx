@@ -35,7 +35,7 @@ export default function AppSidebar() {
   return (
     <>
       {/* Button Toggle */}
-      <div className=" absolute left-8 top-[60px]  md:left-16 z-10 lg:hidden">
+      <div className=" absolute left-4 top-[20px]  md:left-16 z-10 lg:hidden">
         <button
           onClick={() => setExpanded((curr) => !curr)}
           className="p-3 rounded-full  ring-1 ring-gray-300 dark:ring-gray-700  hover:bg-gray-100 hover:dark:bg-slate-700"
