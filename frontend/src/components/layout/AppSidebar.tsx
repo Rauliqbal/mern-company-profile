@@ -45,7 +45,7 @@ export default function AppSidebar() {
       </div>
       {/* Sidebar Menu */}
       <div
-        className={`h-screen w-80 overflow-y-hidden absolute left-0 top-0 z-20 transition-all duration-300 lg:static  bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-gray-700 ${expanded
+        className={`h-screen w-80 overflow-y-hidden absolute left-0 top-0 z-20 transition-all duration-300 lg:static  bg-white dark:bg-background border-r border-gray-200 dark:border-gray-700 ${expanded
           ? "-translate-x-full lg:translate-x-0 "
           : "lg:-translate-x-full translate-x-0 shadow-xl"
           }`}
@@ -76,7 +76,7 @@ export default function AppSidebar() {
 
           {sidebarMenu.map((section) => (
             <div key={section.title} className="mt-8 px-8">
-              <h6 className="font-semibold text-black/50 dark:text-white mb-2">
+              <h6 className="font-semibold text-black/50 dark:text-white mb-2 transition duration-300">
                 {section.title}
               </h6>
 
@@ -93,8 +93,8 @@ export default function AppSidebar() {
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
                         isActive
-                          ? "after:absolute after:content-[''] after:w-1.5 after:h-7 after:rounded-l-lg after:bg-primary after:right-0 relative flex items-center py-3 px-4 gap-3 rounded-xl text-primary dark:hover:text-black dark:text-black bg-primary/20 hover:bg-primary/40 ring-0 ring-gray-200 dark:ring-slate-700 transition duration-300"
-                          : "flex items-center py-3 px-4 gap-3 rounded-xl dark:text-white dark:hover:text-black hover:bg-primary/20 hover:ring-0 ring-1 ring-gray-200 dark:ring-slate-700 transition duration-300"
+                          ? "after:absolute after:content-[''] after:w-1.5 after:h-7 after:rounded-l-lg after:bg-primary after:right-0 relative flex items-center py-3 px-4 gap-3 rounded-xl text-primary dark:text-white bg-primary/20 dark:bg-primary/40 hover:bg-primary/40 ring-0 ring-gray-200 dark:ring-slate-700 transition duration-300"
+                          : "flex items-center py-3 px-4 gap-3 rounded-xl dark:text-white dark:hover:text-white hover:bg-primary/20 hover:ring-0 ring-1 ring-gray-200 dark:ring-slate-700 transition duration-300"
                       }
                     >
                       <IconComponent size={20} />

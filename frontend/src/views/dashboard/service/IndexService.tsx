@@ -3,7 +3,7 @@ import { config } from "@/config";
 import { useServiceStore } from "@/stores/service";
 import { CirclePlus } from "lucide-react";
 import { useEffect } from "react";
-import { Link, NavLink } from "react-router";
+import { Link } from "react-router";
 
 export default function IndexService() {
   const { service, fetchService } = useServiceStore();
@@ -21,11 +21,11 @@ export default function IndexService() {
           <p className="text-gray-400 mt-2">View and Update Company Services</p>
         </div>
         {/* Button Create */}
-        <NavLink to="/dashboard/create-service">
+        <Link to="/dashboard/create-service">
           <Button>
             Add new <CirclePlus />
           </Button>
-        </NavLink>
+        </Link>
       </div>
 
       <hr />

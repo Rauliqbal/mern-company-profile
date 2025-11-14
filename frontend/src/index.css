@@ -83,13 +83,13 @@
 }
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
+  --background: #110E24;
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
+  --card: #110E24;
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.92 0.004 286.32);
+  --primary: #312ECB;
   --primary-foreground: oklch(0.21 0.006 285.885);
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
@@ -124,7 +124,7 @@
     @apply border-border outline-ring/50;
   }
  body {
-    @apply bg-background dark:bg-slate-900 text-foreground dark:text-dark-foregound font-inter transition-all duration-300;
+    @apply bg-background dark:bg-[#07041B] text-foreground dark:text-dark-foregound font-inter transition-all duration-300;
   }
 }
 
