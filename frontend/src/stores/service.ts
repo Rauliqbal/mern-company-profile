@@ -20,7 +20,7 @@ interface StoreState {
 export const useServiceStore = create<StoreState>((set) => ({
   // STATE
   service: null,
-  isLoading: false,
+  isLoading: true,
 
   // ACTIONS
   fetchService: async () => {
@@ -31,7 +31,7 @@ export const useServiceStore = create<StoreState>((set) => ({
       set({ service: data.data, isLoading: false });
     } catch (error) {
       console.log(error);
-      set({ isLoading: false });
+      // set({ isLoading: false });
     }
   },
 
