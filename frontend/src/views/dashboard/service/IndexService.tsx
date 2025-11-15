@@ -50,7 +50,7 @@ export default function IndexService() {
                 ))}
               </>
             ) : (
-              services?.map((service) => (
+              services.map((service) => (
                 <div
                   key={service.id}
                   className="flex items-center justify-between gap-4"
