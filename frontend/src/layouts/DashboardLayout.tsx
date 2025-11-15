@@ -11,7 +11,7 @@ const DashboardLayout: React.FC = () => {
 
       {/* MAIN */}
       <main className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-        <div className="container relative h-full px-4 pt-10 md:py-10">
+        <div className="container mx-auto relative h-full px-4 pt-10 md:py-10">
           {/* Header */}
           <AppHeader />
 

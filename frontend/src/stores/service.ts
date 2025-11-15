@@ -11,7 +11,7 @@ interface Service {
 }
 
 interface StoreState {
-  service: Service[] | null;
+  services: Service[];
   isLoading: boolean;
   fetchService: () => Promise<void>;
   createService: (formData: FormData) => Promise<void>;
@@ -19,7 +19,7 @@ interface StoreState {
 
 export const useServiceStore = create<StoreState>((set) => ({
   // STATE
-  service: null,
+  services: [],
   isLoading: true,
 
   // ACTIONS
@@ -28,7 +28,7 @@ export const useServiceStore = create<StoreState>((set) => ({
     try {
       const { data } = await api.get("/service");
 
-      set({ service: data.data, isLoading: false });
+      set({ services: data.data, isLoading: false });
     } catch (error) {
       console.log(error);
       // set({ isLoading: false });

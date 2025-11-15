@@ -157,8 +157,8 @@ export const usersRelation = relations(userTable, ({ many }) => ({
 }));
 
 export const blogsRelation = relations(blogTable, ({ one }) => ({
-  testimonial: one(testimonialTable, {
+  testimonial: one(userTable, {
     fields: [blogTable.authorId],
-    references: [testimonialTable.id],
+    references: [userTable.id],
   }),
 }));
