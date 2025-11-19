@@ -19,13 +19,13 @@ export const userTable = pgTable("user", {
   email: varchar({ length: 255 }).notNull().unique(),
   password: varchar({ length: 255 }).notNull(),
   role: roleEnum().default("ADMIN").notNull(),
-  isVerified: boolean("is_verified").default(false).notNull(),
+  is_verified: boolean().default(false).notNull(),
   profile: varchar({ length: 255 }),
-  photoUrl: varchar("photo_url", { length: 255 }),
-  createdAt: timestamp("created_at")
+  photo_url: varchar({ length: 255 }),
+  created_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at")
+  updated_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date())
     .notNull(),
@@ -33,14 +33,14 @@ export const userTable = pgTable("user", {
 
 export const refreshTokenTable = pgTable("refresh_token", {
   token: varchar("token", { length: 255 }).primaryKey(),
-  userId: varchar("user_id", { length: 255 })
+  user_id: varchar( { length: 255 })
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
-  expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at")
+  expires_at: timestamp().notNull(),
+  created_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at")
+  updated_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date())
     .notNull(),
@@ -52,12 +52,12 @@ export const serviceTable = pgTable("services", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   title: varchar({ length: 36 }).notNull(),
-  imageUrl: varchar("image_url", { length: 255 }).notNull(),
+  image_url: varchar( { length: 255 }).notNull(),
   description: text().notNull(),
-  createdAt: timestamp("created_at")
+  created_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at")
+  updated_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date())
     .notNull(),
@@ -74,10 +74,10 @@ export const serviceTable = pgTable("services", {
 //   vision: text().notNull(),
 //   mission: text().notNull(),
 //   logo_url: varchar({ length: 255 }).notNull(),
-//    createdAt: timestamp("created_at")
+//    created_at: timestamp()
 //     .default(sql`CURRENT_TIMESTAMP`)
 //     .notNull(),
-//   updatedAt: timestamp("updated_at")
+//   updated_at: timestamp()
 //     .default(sql`CURRENT_TIMESTAMP`)
 //     .$onUpdate(() => new Date())
 //     .notNull(),
@@ -89,13 +89,13 @@ export const testimonialTable = pgTable("testimonials", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar({ length: 36 }).notNull(),
-  jobTitle: varchar("job_title",{ length: 255 }).notNull(),
+  job_title: varchar({ length: 255 }).notNull(),
   company: varchar({ length: 255 }).notNull(),
   message: text().notNull(),
-  createdAt: timestamp("created_at")
+  created_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at")
+  updated_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date())
     .notNull(),
@@ -114,14 +114,14 @@ export const portfolioTable = pgTable("portfolio", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   title: varchar({ length: 36 }).notNull(),
-  thumbnailUrl: varchar("thumbnail_url",{ length: 255 }).notNull(),
-  projectUrl: varchar("project_url",{ length: 255 }).notNull(),
+  thumbnail_url: varchar({ length: 255 }).notNull(),
+  project_url: varchar({ length: 255 }).notNull(),
   description: text().notNull(),
-  testimonialId: varchar("testimonial_id",{ length: 255 }),
-  createdAt: timestamp("created_at")
+  testimonial_id: varchar({ length: 255 }),
+  created_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at")
+  updated_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date())
     .notNull(),
@@ -129,7 +129,7 @@ export const portfolioTable = pgTable("portfolio", {
 
 export const portfolioRelations = relations(portfolioTable, ({ one }) => ({
   testimonial: one(testimonialTable, {
-    fields: [portfolioTable.testimonialId],
+    fields: [portfolioTable.testimonial_id],
     references: [testimonialTable.id],
   }),
 }));
@@ -142,11 +142,11 @@ export const blogTable = pgTable("blogs", {
   title: varchar({ length: 255 }).notNull(),
   content: text().notNull(),
   thumbnail_url: varchar({ length: 255 }).notNull(),
-  authorId: varchar("user_id",{ length: 255 }),
-  createdAt: timestamp("created_at")
+  author_id: varchar({ length: 255 }),
+  created_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at")
+  updated_at: timestamp()
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => new Date())
     .notNull(),
@@ -158,7 +158,25 @@ export const usersRelation = relations(userTable, ({ many }) => ({
 
 export const blogsRelation = relations(blogTable, ({ one }) => ({
   testimonial: one(testimonialTable, {
-    fields: [blogTable.authorId],
+    fields: [blogTable.author_id],
     references: [testimonialTable.id],
   }),
 }));
+
+export const productsTable = pgTable("products", {
+  id: varchar({ length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: varchar({ length: 255 }).notNull(),
+  content: text().notNull(),
+  image_url: varchar({length:255}),
+  icon_url: varchar({ length: 255 }).notNull(),
+  created_at: timestamp()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updated_at: timestamp()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date())
+    .notNull(),
+})
