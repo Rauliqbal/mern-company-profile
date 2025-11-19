@@ -9,8 +9,8 @@ import { toast } from "react-toastify";
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuthStore();
-  const [email, setEmail] = useState("raul.iqbal@vensys.co.id");
-  const [password, setPassword] = useState("@Rauliqbal");
+  const [email, setEmail] = useState("admin@example.com");
+  const [password, setPassword] = useState("admin");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -7,7 +7,8 @@ import { useEffect } from "react";
 import { Link } from "react-router";
 
 export default function IndexService() {
-  const { service, fetchService, isLoading } = useServiceStore();
+  const { services, isLoading } = useServiceStore();
+  const fetchService = useServiceStore((state) => state.fetchService);
   useEffect(() => {
     fetchService();
   }, [fetchService]);
@@ -32,18 +33,24 @@ export default function IndexService() {
 
       {/* Content Dashboard */}
       <article className="mt-4">
-        {service?.length === 0 ? (
-          <p>Kosong</p>
+        {services?.length === 0 ? (
+         <div className="flex justify-center text-center py-40">
+          <div className="flex items-center justify-center flex-col ">
+            <img className="max-w-40" src="/empty.png" alt="" />
+           <p className="text-2xl font-semibold mt-3">No service data available</p>
+           <p className="text-gray-400 mt-2">Please create a new item first</p>
+          </div>
+         </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {isLoading || service === null ? (
+            {isLoading || services === null ? (
               <>
                 {Array.from({ length: 3 }).map((_, index) => (
                   <ServiceSkeleton key={index} />
                 ))}
               </>
             ) : (
-              service?.map((service) => (
+              services.map((service) => (
                 <div
                   key={service.id}
                   className="flex items-center justify-between gap-4"
@@ -66,10 +73,8 @@ export default function IndexService() {
                     <Button variant={"secondary"}>Edit Service</Button>
                   </Link>
                 </div>
-                // <li key={item.id}>{item.title}</li>
               ))
             )}
-            {}
           </div>
         )}
       </article>

@@ -103,7 +103,7 @@ export default function CreateService() {
     formData.append("description", desc);
 
     if (file) {
-      formData.append("imageUrl", file); // Pastikan 'image' sesuai dengan nama field di backend
+      formData.append("imageUrl", file); 
     }
 
     try {
@@ -134,7 +134,7 @@ export default function CreateService() {
         <Link to="/dashboard/service">
           <Button variant={"secondary"}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Kembali
+            Back
           </Button>
         </Link>
       </div>
@@ -159,7 +159,7 @@ export default function CreateService() {
 
             {file ? (
               //  View file Image
-              <div className="max-w-80 mt-1">
+              <div className="max-w-[25rem] mt-1">
                 <div className=" p-4 border border-gray-300 rounded-lg  bg-gray-50 dark:bg-input/40 dark:border-input">
                   {preview && (
                     <img

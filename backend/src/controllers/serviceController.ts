@@ -98,70 +98,68 @@ export const updateService = async (req: Request, res: Response) => {
 
   if (!parsed.success) {
     if (imageFile) {
-      await fs
-        .unlink(`${UPLOAD_PATH}/${imageFile.filename}`)
-        .catch((err) =>
-          console.error("Failed to unlink on validation error:", err)
-        );
+      await fs.unlink(`${UPLOAD_PATH}/${imageFile.filename}`).catch(() => {});
     }
     return res.status(400).json({
       errors: parsed.error.flatten().fieldErrors,
     });
   }
 
-  // image required
-  if (!imageFile) return errorResponse(res, "Image file is required", 400);
-
   const { id } = req.params;
   const { title, description } = parsed.data;
-  const image = `/uploads/${imageFile?.filename}`;
 
+  // check service
   const service = await db
     .select()
     .from(serviceTable)
     .where(eq(serviceTable.id, id))
     .then((rows) => rows[0]);
 
-  // check service if not found
   if (!service) {
     if (imageFile) {
-      await fs
-        .unlink(`${UPLOAD_PATH}/${imageFile.filename}`)
-        .catch((err) =>
-          console.error("Failed to unlink on not found error:", err)
-        );
+      await fs.unlink(`${UPLOAD_PATH}/${imageFile.filename}`).catch(() => {});
     }
     return errorResponse(res, "Service not found", 404);
   }
 
-  // delete old image and replace new image
-  if (service.imageUrl) {
-    const oldImage = service.imageUrl.replace("/uploads/", "");
-    await fs
-      .unlink(`${UPLOAD_PATH}/${oldImage}`)
-      .catch((err) =>
-        console.warn("Old image not found or failed to delete", err)
-      );
+  let imageUrl = service.imageUrl;
+
+  // If uploading a new file, delete the old file.
+  if (imageFile) {
+    if (service.imageUrl) {
+      const old = service.imageUrl.replace("/uploads/", "");
+      await fs.unlink(`${UPLOAD_PATH}/${old}`).catch(() => {});
+    }
+
+    imageUrl = `/uploads/${imageFile.filename}`;
   }
 
   try {
-    await db.update(serviceTable).set({
+    await db
+      .update(serviceTable)
+      .set({
+        title,
+        description,
+        imageUrl,
+        updatedAt: new Date(),
+      })
+      .where(eq(serviceTable.id, id));
+
+    return successResponse(res, "Update service successfully!", {
+      ...service,
       title,
       description,
-      imageUrl: image,
+      imageUrl,
     });
-
-    return successResponse(res, "Update service successfully!", service, 200);
   } catch (error) {
     if (imageFile) {
-      // Delete uploaded files
-      await fs
-        .unlink(`${UPLOAD_PATH}/${imageFile.filename}`)
-        .catch((err) => console.error("Failed to unlink after DB error:", err));
+      await fs.unlink(`${UPLOAD_PATH}/${imageFile.filename}`).catch(() => {});
     }
-    console.error("Database insert error:", error);
+    console.error(error);
+    return errorResponse(res, "Failed to update service", 500);
   }
 };
+
 
 // DELETE SERVICE
 export const deleteService = async (req: Request, res: Response) => {
