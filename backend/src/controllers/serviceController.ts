@@ -51,7 +51,7 @@ export const createService = async (req: Request, res: Response) => {
       .values({
         title,
         description,
-        imageUrl,
+        image_url: imageUrl,
       })
       .returning()
       .then((rows) => rows[0]);
@@ -71,7 +71,6 @@ export const createService = async (req: Request, res: Response) => {
 // GET ALL SERVICE
 export const getServices = async (req: Request, res: Response) => {
   const service = await db.select().from(serviceTable);
-
   return successResponse(res, "Get all services", service);
 };
 
@@ -122,12 +121,12 @@ export const updateService = async (req: Request, res: Response) => {
     return errorResponse(res, "Service not found", 404);
   }
 
-  let imageUrl = service.imageUrl;
+  let imageUrl = service.image_url;
 
   // If uploading a new file, delete the old file.
   if (imageFile) {
-    if (service.imageUrl) {
-      const old = service.imageUrl.replace("/uploads/", "");
+    if (service.image_url) {
+      const old = service.image_url.replace("/uploads/", "");
       await fs.unlink(`${UPLOAD_PATH}/${old}`).catch(() => {});
     }
 
@@ -140,8 +139,7 @@ export const updateService = async (req: Request, res: Response) => {
       .set({
         title,
         description,
-        imageUrl,
-        updatedAt: new Date(),
+        image_url: imageUrl,
       })
       .where(eq(serviceTable.id, id));
 
@@ -160,7 +158,6 @@ export const updateService = async (req: Request, res: Response) => {
   }
 };
 
-
 // DELETE SERVICE
 export const deleteService = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -175,8 +172,8 @@ export const deleteService = async (req: Request, res: Response) => {
   if (!service) return errorResponse(res, "Service not found", 404);
 
   // delete image
-  if (service.imageUrl) {
-    const filename = service.imageUrl.replace("/uploads/", "");
+  if (service.image_url) {
+    const filename = service.image_url.replace("/uploads/", "");
     await fs
       .unlink(`${UPLOAD_PATH}/${filename}`)
       .catch((err) => console.warn("Failed to remove image:", err));

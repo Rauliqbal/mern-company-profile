@@ -58,15 +58,15 @@ export default function IndexService() {
                   <div className="flex items-center gap-3">
                     <img
                       className="aspect-[4/3] max-w-28 rounded-lg"
-                      src={`${config.API_URL}${service.imageUrl}`}
+                      src={`${config.API_URL}${service.image_url}`}
                       alt={`cover ${service.title}`}
                     />
-                    <p className="w-80 max-w-full">{service.title}</p>
+                    <p className="w-40 line-clamp-1 max-w-full">{service.title}</p>
                   </div>
 
-                  <p className="w-80 max-w-full flex items-center gap-1 text-gray-600 text-sm">
+                  <p className="w-40 max-w-full flex items-center gap-1 text-gray-600 text-sm">
                     <Clock width={20} />
-                    {formatDate(service.createdAt)}
+                    {formatDate(service.updated_at)}
                   </p>
 
                   <Link to={`/dashboard/service/${service.id}`}>

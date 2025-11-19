@@ -171,7 +171,7 @@ export default function CreateService() {
                   <div className="flex gap-4 items-center justify-between  mt-4">
                     <div className="flex items-center space-x-2">
                       <FileText className="w-6 h-6 text-indigo-500" />
-                      <span className="text-sm font-medium truncate">
+                      <span className="text-sm font-medium truncate line-clamp-1 w-64">
                         {file.name}
                       </span>
                     </div>

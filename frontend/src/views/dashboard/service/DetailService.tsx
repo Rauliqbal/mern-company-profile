@@ -36,7 +36,7 @@ export default function DetailService() {
     if (serviceDetail) {
       setTitle(serviceDetail.title || "");
       setDesc(serviceDetail.description || "");
-      setPreview(serviceDetail.imageUrl ? `${config.API_URL}${serviceDetail.imageUrl}` : null);
+      setPreview(serviceDetail.image_url ? `${config.API_URL}${serviceDetail.image_url}` : null);
     }
   }, [serviceDetail]);
 
@@ -219,13 +219,13 @@ export default function DetailService() {
                 <span className="font-semibold text-black dark:text-white">
                   Created at:
                 </span>{" "}
-                {formatDate(serviceDetail.createdAt)}
+                {formatDate(serviceDetail.created_at)}
               </p>
               <p>
                 <span className="font-semibold text-black dark:text-white">
                   Updated at:
                 </span>{" "}
-                {formatDate(serviceDetail.updatedAt)}
+                {formatDate(serviceDetail.updated_at)}
               </p>
             </div>
 

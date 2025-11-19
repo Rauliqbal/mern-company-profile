@@ -4,10 +4,10 @@ import { create } from "zustand";
 interface Service {
   id: string;
   title: string;
-  imageUrl: string;
+  image_url: string;
   description: string;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface StoreState {
