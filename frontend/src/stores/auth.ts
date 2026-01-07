@@ -5,8 +5,15 @@ import api from "../services/api";
 interface AuthState {
   accessToken: string | null;
   loading: boolean;
+  error: string | null;
 
   login: (email: string, password: string) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: () => boolean;
   setAccessToken: (token: string) => void;
@@ -15,6 +22,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: localStorage.getItem("accessToken"),
   loading: false,
+  error: null,
 
   login: async (email, password) => {
     const { data } = await api.post(
@@ -24,6 +32,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     );
     localStorage.setItem("accessToken", data.data.accessToken);
     set({ accessToken: data.data.accessToken });
+  },
+
+  register: async (name, email, password, confirmPassword) => {
+    await api.post("/auth/register", {
+      name,
+      email,
+      password,
+      confirmPassword,
+    });
   },
 
   setAccessToken: (token: string | null) => {
