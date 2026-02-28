@@ -1,5 +1,5 @@
 ![License](https://img.shields.io/badge/License-MIT%20License-blue)
-![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+![Status](https://img.shields.io/badge/Status-Development-yellow)
 ![Made With](https://img.shields.io/badge/Made%20With-ReactJS%20%7C%20TailwindCSS%20%7C%20ExpressJS-orange)
 
 # 🚀 Company Profile Website Template
