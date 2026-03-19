@@ -1,13 +1,13 @@
 import React from "react";
 import { Outlet } from "react-router";
 import AppHeader from "../components/layout/AppHeader";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { MainSidebar } from "@/components/layout/MainSidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 
 const DashboardLayout: React.FC = () => {
   return (
     <SidebarProvider>
-      <MainSidebar />
+      <AppSidebar />
 
       <main className="w-full">
         <div className=" relative h-full px-4 pt-10 md:py-10">
