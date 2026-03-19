@@ -10,13 +10,16 @@ interface User {
 
 interface UserState {
   user: User | null;
+  allUsers: User[];
   isLoading: boolean;
   fetchUser: () => Promise<void>;
+  fetchAllUser: () => Promise<void>;
 }
 
 export const useUserStore = create<UserState>((set) => ({
   // STATE
   user: null,
+  allUsers:[],
   isLoading: false,
 
   // ACTIONS
@@ -31,4 +34,15 @@ export const useUserStore = create<UserState>((set) => ({
       set({ isLoading: false });
     }
   },
+
+  fetchAllUser: async () => {
+    set({ isLoading: true });
+    try {
+      const { data } = await api.get("/user/all");
+      // Simpan ke allUsers, bukan ke user
+      set({ allUsers: data.data, isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+    }
+  }
 }));

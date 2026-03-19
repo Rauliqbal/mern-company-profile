@@ -27,6 +27,25 @@ export const getUser = async (req: Request, res: Response) => {
   return successResponse(res, "Success get user", safeUser, 200);
 };
 
+export const getAllUser = async(req: Request, res:Response) => {
+  // if (req.user?.role !== 'ADMIN') {
+  //   return errorResponse(res, "Unauthorization", 401);
+  // }
+
+  try {
+    const getUsers = await db.select().from(userTable);
+
+    const safeUsers = getUsers.map((user) => {
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    });
+
+    return successResponse(res, "Success get users", safeUsers, 200);
+  } catch (error) {
+    return errorResponse(res, "Internal Server Error", 500);
+  }
+}
+
 // DETAIL USER
 export const getDetailUser = async (req: Request, res: Response) => {
   const { id } = req.params;

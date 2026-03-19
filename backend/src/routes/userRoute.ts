@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   deleteUser,
+  getAllUser,
   getDetailUser,
   getUser,
   updateUser,
@@ -10,6 +11,7 @@ import { verifyToken } from "../middlewares/auth";
 const userRoute = Router();
 
 userRoute.get("/", verifyToken, getUser);
+userRoute.get("/all", verifyToken, getAllUser);
 userRoute.put("/:id", verifyToken, updateUser);
 userRoute.get("/:id", verifyToken, getDetailUser);
 userRoute.delete("/:id", verifyToken,deleteUser);
