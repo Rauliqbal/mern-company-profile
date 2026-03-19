@@ -43,7 +43,7 @@ export default function AppSidebar() {
         </button>
       </div>
       <div
-        className={`h-screen w-80 overflow-y-hidden absolute left-0 top-0 z-20 transition-all duration-300 lg:static  bg-white dark:bg-slate-800  ${expanded
+        className={`h-screen w-72 overflow-y-hidden absolute left-0 top-0 z-20 transition-all duration-300 lg:static  bg-white dark:bg-slate-800  ${expanded
           ? "-translate-x-full lg:translate-x-0 "
           : "lg:-translate-x-full translate-x-0 shadow-xl"
           }`}

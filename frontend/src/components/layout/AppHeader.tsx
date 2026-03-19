@@ -1,12 +1,13 @@
 import { useUserStore } from "../../stores/user";
 import ThemeToggle from "../ThemeToggle";
+import { SidebarTrigger } from "../ui/sidebar";
 
 export default function AppHeader() {
    const { user } = useUserStore()
    return (
-      <div className="sticky p-5 lg:absolute inset-x-4 top-4 bg-white dark:bg-slate-800 rounded-3xl">
-         <div className="flex items-center justify-end gap-4 lg:justify-between">
-            <div className="relative hidden lg:block">
+      <div className="sticky lg:absolute inset-x-0 top-0 bg-white dark:bg-slate-800 border-b">
+         <div className="container flex items-center justify-end gap-4 lg:justify-between">
+            {/* <div className="relative hidden lg:block">
                <input
                   placeholder="Search..."
                   className="w-64 px-5 py-3 transition-all bg-transparent rounded-full outline-none input ring-1 ring-gray-300 dark:ring-gray-700 focus:w-72"
@@ -27,7 +28,10 @@ export default function AppHeader() {
                      strokeLinecap="round"
                   ></path>
                </svg>
-            </div>
+            </div> */}
+
+            <SidebarTrigger />
+
 
             <div className="inline-flex items-center gap-2 sm:gap-5">
                <ThemeToggle />
@@ -39,7 +43,7 @@ export default function AppHeader() {
                   </div>
                   <img
                      className="w-12"
-                     src="https://avatar.iran.liara.run/public/boy"
+                     src="https://github.com/shadcn.png"
                      alt={`photo ${user?.name}`}
                   />
                </div>
