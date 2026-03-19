@@ -2,10 +2,11 @@ import { Box, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import * as LucideIcons from "lucide-react";
+import { useAuthStore } from "../../stores/auth";
 
 export default function AppSidebar() {
   const navigate = useNavigate();
-  // const { setIsAuthenticated } = useContext(AuthContext);
+  const { logout } = useAuthStore()
   const [expanded, setExpanded] = useState(true);
 
   // Menu List
@@ -27,7 +28,8 @@ export default function AppSidebar() {
     },
   ];
 
-  function logout() {
+  const handleLogout = async () => {
+    await logout();
     navigate("/login", { replace: true });
   }
   return (
@@ -41,11 +43,10 @@ export default function AppSidebar() {
         </button>
       </div>
       <div
-        className={`h-screen w-80 overflow-y-hidden absolute left-0 top-0 z-20 transition-all duration-300 lg:static  bg-white dark:bg-slate-800  ${
-          expanded
-            ? "-translate-x-full lg:translate-x-0 "
-            : "lg:-translate-x-full translate-x-0 shadow-xl"
-        }`}
+        className={`h-screen w-80 overflow-y-hidden absolute left-0 top-0 z-20 transition-all duration-300 lg:static  bg-white dark:bg-slate-800  ${expanded
+          ? "-translate-x-full lg:translate-x-0 "
+          : "lg:-translate-x-full translate-x-0 shadow-xl"
+          }`}
       >
         <div className="flex flex-col ">
           <div className="flex items-center lg:justify-center px-4 pt-8">
@@ -108,7 +109,7 @@ export default function AppSidebar() {
 
             <div className="flex flex-col gap-4">
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="flex items-center py-3 px-4 gap-3 rounded-full dark:hover:text-black hover:bg-[#FFD88D] hover:ring-0 ring-1 ring-[#e2e8f0]  dark:ring-slate-700 transition duration-300"
               >
                 <Box size="24" />

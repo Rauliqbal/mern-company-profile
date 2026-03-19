@@ -1,65 +1,57 @@
+// src/stores/auth.ts
 import { create } from "zustand";
 import api from "../services/api";
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
 interface AuthState {
-  user: User | null;
-  token: string | null;
+  accessToken: string | null;
   loading: boolean;
   error: string | null;
+
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ) => Promise<void>;
+  logout: () => Promise<void>;
+  isAuthenticated: () => boolean;
+  setAccessToken: (token: string) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  token: null,
+export const useAuthStore = create<AuthState>((set, get) => ({
+  accessToken: localStorage.getItem("accessToken"),
   loading: false,
   error: null,
 
   login: async (email, password) => {
-    set({ loading: true, error: null });
-    try {
-      const { data } = await api.post("/auth/login", {
-        email,
-        password,
-      });
-      set({ user: data.user, token: data.token, loading: false });
-      localStorage.setItem("token", data.token);
-    } catch (err: any) {
-      set({
-        error: err.response?.data?.message || "Login failed",
-        loading: false,
-      });
-    }
+    const { data } = await api.post(
+      "/auth/login",
+      { email, password },
+      { withCredentials: true }
+    );
+    localStorage.setItem("accessToken", data.data.accessToken);
+    set({ accessToken: data.data.accessToken });
   },
 
-  register: async (name, email, password) => {
-    set({ loading: true, error: null });
-    try {
-      const { data } = await api.post("/auth/register", {
-        name,
-        email,
-        password,
-      });
-      set({ user: data.user, token: data.token, loading: false });
-      localStorage.setItem("token", data.token);
-    } catch (err: any) {
-      set({
-        error: err.response?.data?.message || "Register failed",
-        loading: false,
-      });
-    }
+  register: async (name, email, password, confirmPassword) => {
+    await api.post("/auth/register", {
+      name,
+      email,
+      password,
+      confirmPassword,
+    });
   },
 
-  logout: () => {
-    set({ user: null, token: null });
-    localStorage.removeItem("token");
+  setAccessToken: (token: string | null) => {
+    set({ accessToken: token });
   },
+
+  logout: async () => {
+    await api.post("/auth/logout", {}, { withCredentials: true });
+    localStorage.removeItem("accessToken");
+    set({ accessToken: null });
+  },
+
+  isAuthenticated: () => !!get().accessToken,
 }));

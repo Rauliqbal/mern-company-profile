@@ -3,29 +3,46 @@ import Home from './views/Home';
 import Login from './views/Login';
 import Register from './views/Register';
 import Dashboard from './views/dashboard/Dashboard';
-import DashboardLayout from "./layout/DashboardLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
 import Users from "./views/dashboard/Users";
 import Service from "./views/dashboard/Service";
+import ProtectedRoute from "./components/ProtectedRoute";
+import GuestRoute from "./components/GuestRoute";
+import { useUserStore } from "./stores/user";
+import { useAuthStore } from "./stores/auth";
+import { useEffect } from "react";
 
 
 function App() {
+  const { fetchUser } = useUserStore();
+  const { accessToken } = useAuthStore();
 
+  useEffect(() => {
+    if (accessToken) {
+      void fetchUser();
+    }
+  }, [accessToken]);
   return (
-   <>
-    <Routes>
+    <>
+      <Routes>
+        {/* Dashboard Route */}
+        <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/users" element={<Users />} />
+          <Route path="/dashboard/Service" element={<Service />} />
+        </Route>
 
-      <Route element={<DashboardLayout/>}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/users" element={<Users/>}/>
-        <Route path="/dashboard/Service" element={<Service/>}/>
-      </Route>
+        {/* Public Route */}
+        <Route element={<GuestRoute />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
 
-      <Route path="/" element={<Home/>}/>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register/>} />
-
-    </Routes>
-   </>
+        {/* Redirect Route */}
+        <Route path="*" element={<Login />} />
+      </Routes>
+    </>
   )
 }
 

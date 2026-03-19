@@ -1,13 +1,13 @@
 import express from "express";
 import authRouter from "./authRoute";
 import userRoute from "./userRoute";
-import { verifyToken } from "../middlewares/auth";
+import serviceRoute from "./serviceRoute";
 
-// Init
 const router = express.Router();
 
 // Routing
 router.use("/auth", authRouter);
-router.use('/user',userRoute)
+router.use("/user", userRoute);
+router.use("/service", serviceRoute);
 
 export default router;

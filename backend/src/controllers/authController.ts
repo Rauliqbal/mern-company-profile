@@ -6,7 +6,11 @@ import jwt from "jsonwebtoken";
 import db from "../db";
 import { eq } from "drizzle-orm";
 import { refreshTokenTable, userTable } from "../db/schema";
-import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefeshToken,
+} from "../utils/jwt";
 import config from "../config";
 
 // REGISTER USER
@@ -21,42 +25,36 @@ export const register = async (req: Request, res: Response) => {
 
   const { name, email, password } = parsed.data;
 
-  try {
-    // Check User
-    const checkUser = await db
-      .select()
-      .from(userTable)
-      .where(eq(userTable.email, email))
-      .then((rows) => rows[0]);
-    if (checkUser) {
-      return errorResponse(res, "Account already exists", 400);
-    }
+  // check the same email user
+  const checkUser = await db
+    .select()
+    .from(userTable)
+    .where(eq(userTable.email, email))
+    .then((rows) => rows[0]);
+  if (checkUser) return errorResponse(res, "Account already exists", 400);
 
-    // Hash Password
-    const hashPassword = await argon2.hash(password);
+  // Hash Password
+  const hashPassword = await argon2.hash(password);
 
-    // Create new user
-    const create = await db
-      .insert(userTable)
-      .values({
-        name,
-        email,
-        password: hashPassword,
-      })
-      .returning()
-      .then((rows) => rows[0]);
+  // create new user
+  const create = await db
+    .insert(userTable)
+    .values({
+      name,
+      email,
+      password: hashPassword,
+    })
+    .returning()
+    .then((rows) => rows[0]);
 
-    const { password: _, ...userWithoutPassword } = create;
+  const { password: _, ...userWithoutPassword } = create;
 
-    successResponse(
-      res,
-      "Register account successfully!",
-      userWithoutPassword,
-      200
-    );
-  } catch (error) {
-    errorResponse(res, "Internal server error", 500);
-  }
+  return successResponse(
+    res,
+    "Register account successfully!",
+    userWithoutPassword,
+    200
+  );
 };
 
 // LOGIN USER
@@ -71,71 +69,87 @@ export const login = async (req: Request, res: Response) => {
 
   const { email, password } = parsed.data;
 
+  // check user if not there
+  const checkUser = await db
+    .select()
+    .from(userTable)
+    .where(eq(userTable.email, email))
+    .then((rows) => rows[0]);
+  if (!checkUser) {
+    return errorResponse(res, "Account not found", 404);
+  }
+
+  // Valid password
+  const validPassword = await argon2.verify(checkUser.password, password);
+  if (!validPassword) {
+    return errorResponse(res, "Wrong password", 404);
+  }
+
+  // Generate Token
+  const accessToken = generateAccessToken(checkUser);
+  const refreshToken = generateRefreshToken(checkUser);
+
+  // Save Refresh Token DB
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  await db.insert(refreshTokenTable).values({
+    token: refreshToken,
+    userId: checkUser.id,
+    expiresAt,
+  });
+
+  // set refresh token to cookies
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: config.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  // delete password
+  const { password: _, ...userWithoutPassword } = checkUser;
+
+  return successResponse(res, "Login successful!", {
+    user: userWithoutPassword,
+    accessToken,
+  });
+};
+
+// LOGOUT USER
+export const logout = async (req: Request, res: Response) => {
+  const token = req.cookies.refreshToken;
+
+  if (!token) {
+    return res.status(401).json({ message: "No refresh token" });
+  }
   try {
-    // Check user
-    const checkUser = await db
-      .select()
-      .from(userTable)
-      .where(eq(userTable.email, email))
-      .then((rows) => rows[0]);
-    if (!checkUser) {
-      return errorResponse(res, "Account not found", 404);
-    }
+    const payload = verifyRefeshToken(token) as any;
 
-    // Valid password
-    const validPassword = await argon2.verify(checkUser.password, password)
-    if (!validPassword) {
-      return errorResponse(res, "Wrong password", 401);
-    }
+    console.log(payload);
 
-    // Generate Token
-    const accessToken = generateAccessToken(checkUser);
-    const refreshToken = generateRefreshToken(checkUser);
+    await db
+      .delete(refreshTokenTable)
+      .where(eq(refreshTokenTable.userId, payload.id));
 
-    // Save Refresh Token DB
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    await db.insert(refreshTokenTable).values({
-      token: refreshToken,
-      userId: checkUser.id,
-      expiresAt,
-    });
+    // remove refresh token cookies
+    res.clearCookie("refreshToken");
 
-    // Set refresh token to cookies
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: config.NODE_ENV ==='production',
-      sameSite: "strict",
-      maxAge:  7 * 24 * 60 * 60 * 1000
-    })
-
-    // Delete password
-    const { password: _, ...userWithoutPassword } = checkUser;
-
-    return successResponse(res, "Login successful!", {
-      user: userWithoutPassword,
-      tokens: {
-        accessToken,
-      },
-    });
-  } catch (error) {
-    errorResponse(res, "Internal server error", 500);
+    res.json({ message: "Logged out successfully" });
+  } catch {
+    res.status(403).json({ message: "Invalid token" });
   }
 };
 
-
 // Refresh Token
 export const refreshAccessToken = async (req: Request, res: Response) => {
-  const { token } = req.body;
+  const token = req.cookies.refreshToken;
 
-  if (!token) return errorResponse(res, "Refresh token required", 400);
+  console.log(token);
+  if (!token) return res.sendStatus(401);
 
   try {
-    const decoded = jwt.verify(
-      token,
-      config.JWT_REFRESH_TOKEN as string
-    ) as { id: string };
+    const decoded = verifyRefeshToken(token) as { id: string };
 
-    // Check token on database
+    // check token on database
     const stored = await db
       .select()
       .from(refreshTokenTable)
@@ -155,10 +169,11 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 
     const newAccessToken = generateAccessToken(userData);
 
-    successResponse(res, "Access token refreshed", { accessToken: newAccessToken });
+    successResponse(res, "Access token refreshed", {
+      accessToken: newAccessToken,
+    });
   } catch (error) {
-    console.error('ERROR', error);
+    console.error("ERROR", error);
     errorResponse(res, "Invalid or expired refresh token", 403);
   }
 };
-

@@ -1,45 +1,42 @@
+// src/pages/Login.tsx
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import { useAuthStore } from "../stores/auth";
+import { useNavigate } from "react-router";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, loading, error } = useAuthStore();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { login } = useAuthStore();
+  const [email, setEmail] = useState("raul.iqbal@vensys.co.id");
+  const [password, setPassword] = useState("@Rauliqbal");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(email, password);
-    navigate("/dashboard");
+    try {
+      await login(email, password);
+      navigate("/dashboard")
+      toast.success("Sign in was successful")
+    } catch {
+      toast.error("Incorrect email or password!")
+    }
   };
 
   return (
-    <div className="flex flex-col items-center mt-20">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col w-64 space-y-3">
-        <input
-          type="email"
-          placeholder="Email"
-          className="border p-2 rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="border p-2 rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button
-          disabled={loading}
-          className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-        >
-          {loading ? "Loading..." : "Login"}
-        </button>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+    <div className="flex flex-col items-center justify-center h-screen">
+      <form onSubmit={handleSubmit} className="max-w-2xl p-4 md:p-6 lg:p-10 border rounded-xl bg-white">
+        <h2 className="text-2xl font-bold mb-2">CMS Dashboard Login</h2>
+        <p className="text-gray-400">Access your content management system.</p>
+      <div className="mt-6">
+        <label className="text-sm" htmlFor="email">Email</label>
+        <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com"/>
+      </div>
+      <div className="mt-5">
+        <label className="text-sm" htmlFor="password">Password</label>
+        <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="john@example.com"/>
+      </div>
+        <Button className="w-full mt-4" type="submit">Sign in</Button>
       </form>
     </div>
   );

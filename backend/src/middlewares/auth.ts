@@ -12,7 +12,9 @@ export const verifyToken = async (
   const header = req.headers.authorization;
 
   if (!header || !header.startsWith("Bearer ")) {
-    return errorResponse(res, "Access token is missing or invalid", 401);
+    return res
+      .status(401)
+      .json({ message: "Access token is missing or invalid" });
   }
 
   const token = header.split(" ")[1];
@@ -27,10 +29,9 @@ export const verifyToken = async (
     req.user = decoded;
     next();
   } catch (error) {
-    return errorResponse(res, "Invalid or expired access token", 403);
+    return res.status(401).json({ message: "Invalid or expired access token" });
   }
 };
-
 
 // Verification Role Admin
 export const verifyAdmin = (
@@ -41,7 +42,7 @@ export const verifyAdmin = (
   const user = (req as any).user;
 
   if (!user || user.role !== "superadmin") {
-    return errorResponse(res, "Forbidden: Admin only", 403);
+    return res.status(403).json({ message: "Forbidden: Admin only" });
   }
   next();
 };
