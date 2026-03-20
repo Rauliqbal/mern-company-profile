@@ -130,4 +130,9 @@
     @apply mx-auto
   }
 }
+@layer components {
+  .card {
+    @apply bg-card
+  }
+}
 

@@ -16,15 +16,16 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+interface DataTableProps<TData> {
+  // columns: ColumnDef<TData, TValue>[]
+  columns: any[]
   data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const table = useReactTable({
     data,
     columns,
@@ -34,7 +35,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="rounded-md border">
+      <div className="rounded-md border card">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
