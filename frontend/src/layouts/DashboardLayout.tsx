@@ -9,14 +9,11 @@ const DashboardLayout: React.FC = () => {
     <SidebarProvider>
       <AppSidebar />
 
-      <main className="w-full">
-        <div className=" relative h-full px-4 pt-10 md:py-10">
+      <main className="relative w-full">
           <AppHeader />
-
-          <div className="mt-28"> 
+        <div className="mt-16 container"> 
             <Outlet />
           </div>
-        </div>
       </main>
 
       <div className="flex h-screen overflow-hidden">

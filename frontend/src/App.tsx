@@ -33,8 +33,8 @@ function App() {
         </Route>
 
         {/* Public Route */}
-        <Route element={<GuestRoute />}>
           <Route path="/" element={<Home />} />
+        <Route element={<GuestRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>

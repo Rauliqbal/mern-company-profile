@@ -38,7 +38,7 @@ const navlink = [
 export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
-      <SidebarContent className="px-2">
+      <SidebarContent>
         {navlink.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
