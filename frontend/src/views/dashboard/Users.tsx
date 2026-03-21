@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input"
 import type { ColumnDef } from "@tanstack/react-table"
 import { Label } from "@/components/ui/label"
-import { Field, FieldLabel } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
 
 type User = {
   id: string
@@ -173,38 +173,36 @@ export default function Users() {
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">Nama</Label>
-              <Input
-                id="name"
-                className="col-span-3"
-                value={selectedUser?.name || ""}
-                onChange={(e) => setSelectedUser(prev => prev ? { ...prev, name: e.target.value } : null)}
-              />
-
-              <Field>
-                <FieldLabel htmlFor="input-field-username">Username</FieldLabel>
-                <Input
-                  id="input-field-username"
-                  type="text"
-                  placeholder="Enter your username"
-                />
-              </Field>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">Email</Label>
-              <Input
-                id="email"
-                disabled
-                className="col-span-3 opacity-70"
-                value={selectedUser?.email || ""}
-              />
+            <div className="">
+              <form onSubmit={handleSave}>
+                <FieldSet>
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="name">Full name</FieldLabel>
+                      <Input value={selectedUser?.name || ""}
+                        onChange={(e) => setSelectedUser(prev => prev ? { ...prev, name: e.target.value } : null)} id="name" autoComplete="off" placeholder="John doe" />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="email">Email</FieldLabel>
+                      <Input id="email" autoComplete="off" placeholder="john@mail.com" />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="password">Password</FieldLabel>
+                      <Input id="password" autoComplete="off" placeholder="••••••" />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="confPassword">Confirm Password</FieldLabel>
+                      <Input id="confPassword" autoComplete="off" placeholder="••••••" />
+                    </Field>
+                  </FieldGroup>
+                </FieldSet>
+              </form>
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditOpen(false)}>Batal</Button>
-            <Button type="submit" onClick={handleSave}>Simpan Perubahan</Button>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
+            <Button type="submit" onClick={handleSave}>Save user</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -33,14 +33,14 @@ function App() {
         </Route>
 
         {/* Public Route */}
-          <Route path="/" element={<Home />} />
         <Route element={<GuestRoute />}>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
 
         {/* Redirect Route */}
-        <Route path="*" element={<Login />} />
+        {/* <Route path="*" element={<Login />} /> */}
       </Routes>
     </>
   )
