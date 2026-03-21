@@ -11,7 +11,7 @@ const DashboardLayout: React.FC = () => {
 
       <main className="relative w-full">
           <AppHeader />
-        <div className="mt-16 container"> 
+        <div className="mt-10 container"> 
             <Outlet />
           </div>
       </main>

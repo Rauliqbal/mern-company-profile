@@ -2,12 +2,17 @@
 import { create } from "zustand";
 import api from "../services/api";
 
+type LoginResponse = {
+  success: boolean;
+  message: string;
+};
+
 interface AuthState {
   accessToken: string | null;
   loading: boolean;
   error: string | null;
 
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<LoginResponse>;
   register: (
     name: string,
     email: string,
@@ -25,13 +30,28 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   error: null,
 
   login: async (email, password) => {
-    const { data } = await api.post(
-      "/auth/login",
-      { email, password },
-      { withCredentials: true }
-    );
-    localStorage.setItem("accessToken", data.data.accessToken);
-    set({ accessToken: data.data.accessToken });
+    try {
+      const { data } = await api.post(
+        "/auth/login",
+        { email, password },
+        { withCredentials: true }
+      );
+
+      localStorage.setItem("accessToken", data.data.accessToken);
+
+      set({ accessToken: data.data.accessToken });
+
+      return {
+        success: true,
+        message: "Login successful",
+        data,
+      };  
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error?.response?.data?.message || "Login failed",
+      };
+    }
   },
 
   register: async (name, email, password, confirmPassword) => {

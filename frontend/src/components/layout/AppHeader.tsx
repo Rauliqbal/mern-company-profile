@@ -3,6 +3,7 @@ import ThemeToggle from "../ThemeToggle";
 import { SidebarTrigger } from "../ui/sidebar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { useAuthStore } from "@/stores/auth";
+import { toast } from "sonner";
    
 export default function AppHeader() {
    const { user } = useUserStore()
@@ -10,9 +11,11 @@ export default function AppHeader() {
 
    function handleLogout(){
       logout()
+      toast.success("Logged out successfully!")
+
    }
    return (
-      <div className="px-4 absolute inset-x-0 top-0 py-2 bg-sidebar border-b">
+      <div className="px-4 sticky inset-x-0 top-0 py-2 bg-sidebar border-b">
          <div className="flex items-center justify-end gap-4 lg:justify-between">
             <SidebarTrigger />
             <div className="inline-flex items-center gap-2 sm:gap-5">
