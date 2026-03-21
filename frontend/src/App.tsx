@@ -40,7 +40,7 @@ function App() {
         </Route>
 
         {/* Redirect Route */}
-        <Route path="*" element={<Login />} />
+        {/* <Route path="*" element={<Login />} /> */}
       </Routes>
     </>
   )

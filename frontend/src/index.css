@@ -50,7 +50,7 @@
 :root {
   --radius: 0.625rem;
   --background: #f1f1f1;
-  /* --foreground: oklch(0.141 0.005 285.823); */
+  --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
@@ -116,7 +116,6 @@
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
 
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
@@ -124,7 +123,16 @@
     @apply border-border outline-ring/50;
   }
  body {
-    @apply bg-background dark:bg-slate-900 text-foreground dark:text-dark-foregound font-inter transition-all duration-300;
+    /* @apply bg-background dark:bg-slate-900 text-foreground dark:text-dark-foregound font-inter transition-all duration-300; */
+    @apply text-foreground font-inter bg-background dark:text-dark-foregound
+  }
+  .container {
+    @apply mx-auto max-w-7xl! px-4
+  }
+}
+@layer components {
+  .card {
+    @apply bg-card
   }
 }
 

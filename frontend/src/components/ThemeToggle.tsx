@@ -1,5 +1,6 @@
 import { MoonStar, Sun } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Button } from "./ui/button";
 
 const ThemeToggle = () => {
   const [theme, setTheme] = useState("light");
@@ -31,16 +32,17 @@ const ThemeToggle = () => {
   };
 
   return (
-    <button
+    <Button
+      variant="secondary"
+      size="icon"
       onClick={toggleTheme}
-      className="p-3 rounded-full ring-1 ring-gray-300 dark:ring-gray-700  hover:bg-gray-100 hover:dark:bg-slate-700"
     >
       {theme === "dark" ? (
-        <MoonStar/>
+        <MoonStar />
       ) : (
-        <Sun/>
+        <Sun />
       )}
-    </button>
+    </Button>
   );
 };
 

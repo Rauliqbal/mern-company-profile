@@ -1,27 +1,36 @@
 import React from "react";
 import { Outlet } from "react-router";
 import AppHeader from "../components/layout/AppHeader";
-import AppSidebar from "../components/layout/AppSidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 
 const DashboardLayout: React.FC = () => {
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* SIDEBAR */}
-      <AppSidebar/>
+    <SidebarProvider>
+      <AppSidebar />
 
-      {/* MAIN */}
-      <main className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-        <div className="container relative h-full px-4 pt-10 md:py-10">
-          {/* Header */}
+      <main className="relative w-full">
           <AppHeader />
-
-          {/* Main Content */}
-          <div className="mt-28">
+        <div className="mt-10 container"> 
             <Outlet />
           </div>
-        </div>
       </main>
-    </div>
+
+      <div className="flex h-screen overflow-hidden">
+
+
+        {/* <main className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+          <div className="container relative h-full px-4 pt-10 md:py-10">
+            <SidebarTrigger />
+            <AppHeader />
+
+            <div className="mt-28">
+              <Outlet />
+            </div>
+          </div>
+        </main> */}
+      </div>
+    </SidebarProvider>
   );
 };
 

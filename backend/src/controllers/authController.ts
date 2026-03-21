@@ -60,7 +60,6 @@ export const register = async (req: Request, res: Response) => {
 // LOGIN USER
 export const login = async (req: Request, res: Response) => {
   const parsed = loginSchema.safeParse(req.body);
-
   if (!parsed.success) {
     return res.status(400).json({
       errors: parsed.error.flatten().fieldErrors,
@@ -79,10 +78,15 @@ export const login = async (req: Request, res: Response) => {
     return errorResponse(res, "Account not found", 404);
   }
 
+  // Verified user?
+  if(!checkUser.isVerified) {
+    return errorResponse(res,"Account not verified", 403)
+  }
+
   // Valid password
   const validPassword = await argon2.verify(checkUser.password, password);
   if (!validPassword) {
-    return errorResponse(res, "Wrong password", 404);
+    return errorResponse(res, "Wrong password", 403);
   }
 
   // Generate Token
@@ -177,3 +181,5 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
     errorResponse(res, "Invalid or expired refresh token", 403);
   }
 };
+
+
