@@ -2,9 +2,10 @@
 import { create } from "zustand";
 import api from "../services/api";
 
-type LoginResponse = {
+type ApiResponse<T = unknown> = {
   success: boolean;
   message: string;
+  data?: T;
 };
 
 interface AuthState {
@@ -12,13 +13,13 @@ interface AuthState {
   loading: boolean;
   error: string | null;
 
-  login: (email: string, password: string) => Promise<LoginResponse>;
+  login: (email: string, password: string) => Promise<ApiResponse>;
   register: (
     name: string,
     email: string,
     password: string,
     confirmPassword: string
-  ) => Promise<void>;
+  ) => Promise<ApiResponse>;
   logout: () => Promise<void>;
   isAuthenticated: () => boolean;
   setAccessToken: (token: string) => void;
@@ -34,7 +35,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { data } = await api.post(
         "/auth/login",
         { email, password },
-        { withCredentials: true }
       );
 
       localStorage.setItem("accessToken", data.data.accessToken);
@@ -43,24 +43,36 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       return {
         success: true,
-        message: "Login successful",
+        message: data.message,
         data,
-      };  
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error?.response?.data?.message,
+      };
+    }
+  },
+
+  register: async (name, email, password, confirmPassword) => {
+    try {
+      const { data } = await api.post("/auth/register", {
+        name,
+        email,
+        password,
+        confirmPassword,
+      });
+     
+      return {
+        success: true,
+        message: data.message
+      };
     } catch (error: any) {
       return {
         success: false,
         message: error?.response?.data?.message || "Login failed",
       };
     }
-  },
-
-  register: async (name, email, password, confirmPassword) => {
-    await api.post("/auth/register", {
-      name,
-      email,
-      password,
-      confirmPassword,
-    });
   },
 
   setAccessToken: (token: string | null) => {

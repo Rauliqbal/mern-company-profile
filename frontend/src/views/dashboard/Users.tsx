@@ -8,8 +8,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import type { ColumnDef } from "@tanstack/react-table"
-import { Label } from "@/components/ui/label"
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
+import { useAuthStore } from "@/stores/auth"
+import { toast } from "sonner"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
 type User = {
   id: string
@@ -20,10 +22,17 @@ type User = {
 }
 
 export default function Users() {
-  const { fetchAllUser, allUsers, isLoading } = useUserStore()
+  const { fetchAllUser, allUsers, isLoading, createUser,deleteUser } = useUserStore()
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isAddOpen, setIsAddOpen] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("raul.iqbal@vensys.co.id");
+  const [password, setPassword] = useState("@Rauliqbal");
+  const [confirmPassword, setConfirmPassword] = useState("@Rauliqbal");
 
   const columns = useMemo<ColumnDef<User, any>[]>(
     () => [
@@ -83,7 +92,10 @@ export default function Users() {
                   Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">
+                <DropdownMenuItem onClick={() => {
+                  setIsDeleteOpen(true)
+                  setUserToDelete(user);
+                }} variant="destructive">
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </DropdownMenuItem>
@@ -96,9 +108,27 @@ export default function Users() {
     []
   )
 
-  const handleSave = () => {
-    console.log("Data yang akan dikirim:", selectedUser)
-    setIsEditOpen(false)
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      toast.error("Password tidak sama");
+      return;
+    }
+
+    const res = await createUser(name, email, password, confirmPassword);
+    if (res.success) {
+      toast.success(res.message);
+      setIsAddOpen(false);
+
+      setName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+    } else {
+      toast.error(res.message);
+    }
+    setIsAddOpen(false)
   }
 
   useEffect(() => {
@@ -115,8 +145,6 @@ export default function Users() {
         <Button onClick={() => setIsAddOpen(true)}>Add User <UserPlus2 /></Button>
       </div>
 
-      {/* {isLoading && <Loader2 className="animate-spin" />} */}
-
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter users..."
@@ -125,6 +153,7 @@ export default function Users() {
       </div>
       <DataTable columns={columns} data={allUsers} />
 
+      {/* Update User Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -140,17 +169,16 @@ export default function Users() {
               <Input
                 id="name"
                 className="col-span-3"
-                value={selectedUser?.name || ""}
-                onChange={(e) => setSelectedUser(prev => prev ? { ...prev, name: e.target.value } : null)}
+                value={name} onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="email" className="text-right">Email</label>
               <Input
                 id="email"
-                disabled
+
                 className="col-span-3 opacity-70"
-                value={selectedUser?.email || ""}
+                value={email} onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
@@ -162,6 +190,7 @@ export default function Users() {
         </DialogContent>
       </Dialog>
 
+      {/* Create User Dialog */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -179,20 +208,36 @@ export default function Users() {
                   <FieldGroup>
                     <Field>
                       <FieldLabel htmlFor="name">Full name</FieldLabel>
-                      <Input value={selectedUser?.name || ""}
-                        onChange={(e) => setSelectedUser(prev => prev ? { ...prev, name: e.target.value } : null)} id="name" autoComplete="off" placeholder="John doe" />
+                      <Input
+                        id="name"
+                        autoComplete="off"
+                        placeholder="John doe"
+                        value={name} onChange={(e) => setName(e.target.value)} />
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="email">Email</FieldLabel>
-                      <Input id="email" autoComplete="off" placeholder="john@mail.com" />
+                      <Input
+                        id="email"
+                        autoComplete="off"
+                        placeholder="john@mail.com"
+                        value={email} onChange={(e) => setEmail(e.target.value)} />
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="password">Password</FieldLabel>
-                      <Input id="password" autoComplete="off" placeholder="••••••" />
+                      <Input
+                        id="password"
+                        autoComplete="off"
+                        placeholder="••••••"
+                        value={password} onChange={(e) => setPassword(e.target.value)} />
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="confPassword">Confirm Password</FieldLabel>
-                      <Input id="confPassword" autoComplete="off" placeholder="••••••" />
+                      <Input
+                        id="confPassword"
+                        autoComplete="off"
+                        placeholder="••••••"
+                        value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+
                     </Field>
                   </FieldGroup>
                 </FieldSet>
@@ -206,6 +251,33 @@ export default function Users() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete User Dialoag */}
+      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete User</AlertDialogTitle>
+            <AlertDialogDescription>
+             Are you sure you want to delete <span className="font-bold">{userToDelete?.name}</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction variant="destructive"
+              onClick={async () => {
+                if (!userToDelete) return;
+                const res = await deleteUser(userToDelete.id)
+                if (res.success) {
+                  toast.success(res.message);
+                } else {
+                  toast.error(res.message);
+                }
+                setIsDeleteOpen(false);
+                setUserToDelete(null);
+              }}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

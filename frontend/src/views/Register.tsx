@@ -3,7 +3,7 @@ import { useAuthStore } from "../stores/auth";
 import { useNavigate } from "react-router";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
+import {toast} from 'sonner'
 
 export default function Register() {
   const navigate = useNavigate();
