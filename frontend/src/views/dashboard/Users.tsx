@@ -22,7 +22,7 @@ type User = {
 }
 
 export default function Users() {
-  const { fetchAllUser, allUsers, isLoading, createUser,deleteUser } = useUserStore()
+  const { fetchAllUser, allUsers, isLoading, createUser, deleteUser } = useUserStore()
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isAddOpen, setIsAddOpen] = useState(false)
@@ -108,7 +108,7 @@ export default function Users() {
     []
   )
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -163,29 +163,51 @@ export default function Users() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="name" className="text-right">Nama</label>
-              <Input
-                id="name"
-                className="col-span-3"
-                value={name} onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="email" className="text-right">Email</label>
-              <Input
-                id="email"
+          <div>
+            <form onSubmit={}>
+              <FieldSet>
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="name">Full name</FieldLabel>
+                    <Input
+                      id="name"
+                      autoComplete="off"
+                      placeholder="John doe"
+                      value={name} onChange={(e) => setName(e.target.value)} />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <Input
+                      id="email"
+                      autoComplete="off"
+                      placeholder="john@mail.com"
+                      value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <Input
+                      id="password"
+                      autoComplete="off"
+                      placeholder="••••••"
+                      value={password} onChange={(e) => setPassword(e.target.value)} />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="confPassword">Confirm Password</FieldLabel>
+                    <Input
+                      id="confPassword"
+                      autoComplete="off"
+                      placeholder="••••••"
+                      value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-                className="col-span-3 opacity-70"
-                value={email} onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+                  </Field>
+                </FieldGroup>
+              </FieldSet>
+            </form>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditOpen(false)}>Batal</Button>
-            <Button type="submit" onClick={handleSave}>Simpan Perubahan</Button>
+            <Button type="submit" onClick={}>Simpan Perubahan</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -200,54 +222,51 @@ export default function Users() {
               Create new user here. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
+          <div>
+            <form onSubmit={handleAddUser}>
+              <FieldSet>
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="name">Full name</FieldLabel>
+                    <Input
+                      id="name"
+                      autoComplete="off"
+                      placeholder="John doe"
+                      value={name} onChange={(e) => setName(e.target.value)} />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <Input
+                      id="email"
+                      autoComplete="off"
+                      placeholder="john@mail.com"
+                      value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <Input
+                      id="password"
+                      autoComplete="off"
+                      placeholder="••••••"
+                      value={password} onChange={(e) => setPassword(e.target.value)} />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="confPassword">Confirm Password</FieldLabel>
+                    <Input
+                      id="confPassword"
+                      autoComplete="off"
+                      placeholder="••••••"
+                      value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-          <div className="grid gap-4 py-4">
-            <div className="">
-              <form onSubmit={handleSave}>
-                <FieldSet>
-                  <FieldGroup>
-                    <Field>
-                      <FieldLabel htmlFor="name">Full name</FieldLabel>
-                      <Input
-                        id="name"
-                        autoComplete="off"
-                        placeholder="John doe"
-                        value={name} onChange={(e) => setName(e.target.value)} />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="email">Email</FieldLabel>
-                      <Input
-                        id="email"
-                        autoComplete="off"
-                        placeholder="john@mail.com"
-                        value={email} onChange={(e) => setEmail(e.target.value)} />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="password">Password</FieldLabel>
-                      <Input
-                        id="password"
-                        autoComplete="off"
-                        placeholder="••••••"
-                        value={password} onChange={(e) => setPassword(e.target.value)} />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="confPassword">Confirm Password</FieldLabel>
-                      <Input
-                        id="confPassword"
-                        autoComplete="off"
-                        placeholder="••••••"
-                        value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-
-                    </Field>
-                  </FieldGroup>
-                </FieldSet>
-              </form>
-            </div>
+                  </Field>
+                </FieldGroup>
+              </FieldSet>
+            </form>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
-            <Button type="submit" onClick={handleSave}>Save user</Button>
+            <Button type="submit" onClick={handleAddUser}>Save user</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -258,7 +277,7 @@ export default function Users() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete User</AlertDialogTitle>
             <AlertDialogDescription>
-             Are you sure you want to delete <span className="font-bold">{userToDelete?.name}</span>
+              Are you sure you want to delete <span className="font-bold">{userToDelete?.name}</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

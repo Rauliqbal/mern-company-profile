@@ -12,7 +12,7 @@ const userRoute = Router();
 
 userRoute.get("/", verifyToken, getUser);
 userRoute.get("/all", verifyToken, getAllUser);
-userRoute.put("/:id", verifyToken, updateUser);
+userRoute.patch("/:id", verifyToken, updateUser);
 userRoute.get("/:id", verifyToken, getDetailUser);
 userRoute.delete("/:id", verifyToken,deleteUser);
 

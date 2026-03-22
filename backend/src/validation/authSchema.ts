@@ -23,3 +23,10 @@ export const loginSchema = z.object({
   email: z.email("Email invalid"),
   password: z.string("Password must be at least 8 characters long"),
 });
+
+export const updateUserSchema = registerSchema.partial().refine(
+  (data) => Object.keys(data).length > 0,
+  {
+    message: "At least one field must be provided",
+  }
+);

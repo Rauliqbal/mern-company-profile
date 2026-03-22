@@ -3,7 +3,7 @@ import { errorResponse, successResponse } from "../utils/response";
 import db from "../db";
 import { eq } from "drizzle-orm";
 import { userTable } from "../db/schema";
-import { registerSchema } from "../validation/authSchema";
+import { registerSchema, updateUserSchema } from "../validation/authSchema";
 import argon2 from "argon2";
 
 // GET USER
@@ -72,7 +72,7 @@ export const getDetailUser = async (req: Request, res: Response) => {
 
 // UPDATE USER
 export const updateUser = async (req: Request, res: Response) => {
-  const parsed = registerSchema.safeParse(req.body);
+  const parsed = updateUserSchema.safeParse(req.body)
   if (!parsed.success) {
     return res.status(400).json({
       errors: parsed.error.flatten().fieldErrors,
@@ -83,26 +83,30 @@ export const updateUser = async (req: Request, res: Response) => {
   const { name, email, password } = parsed.data;
 
   // check the same email user
-  const checkUser = await db
-    .select()
-    .from(userTable)
-    .where(eq(userTable.email, email))
-    .then((rows) => rows[0]);
-  if (checkUser) {
-    return errorResponse(res, "Email has been used", 400);
+ if (email) {
+    const checkUser = await db
+      .select()
+      .from(userTable)
+      .where(eq(userTable.email, email))
+      .then((rows) => rows[0]);
+
+    if (checkUser && checkUser.id !== id) {
+      return errorResponse(res, "Email has been used", 400);
+    }
   }
 
-  // Hash password
-  const hashPassword = await argon2.hash(password);
+  const updatePayload: any = {};
+
+  if (name) updatePayload.name = name;
+  if (email) updatePayload.email = email;
+  if (password) {
+    updatePayload.password = await argon2.hash(password);
+  }
 
   // Update user
   const update = await db
     .update(userTable)
-    .set({
-      name,
-      email,
-      password: hashPassword,
-    })
+    .set(updatePayload)
     .where(eq(userTable.id, id))
     .returning()
     .then((rows) => rows[0]);
