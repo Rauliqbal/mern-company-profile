@@ -22,7 +22,7 @@ type User = {
 }
 
 export default function Users() {
-  const { fetchAllUser, allUsers, isLoading, createUser, deleteUser } = useUserStore()
+  const { fetchAllUser, allUsers, isLoading, createUser, updateUser, deleteUser } = useUserStore()
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isAddOpen, setIsAddOpen] = useState(false)
@@ -131,6 +131,48 @@ export default function Users() {
     setIsAddOpen(false)
   }
 
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!selectedUser) return;
+
+    const payload: any = {};
+
+    if (name !== selectedUser.name) payload.name = name;
+    if (email !== selectedUser.email) payload.email = email;
+    if (password) {
+      if (password !== confirmPassword) {
+        toast.error("Password tidak sama");
+        return;
+      }
+      payload.password = password;
+    }
+
+    if (Object.keys(payload).length === 0) {
+      toast.error("Tidak ada perubahan");
+      return;
+    }
+
+    const res = await updateUser(selectedUser.id, payload);
+
+    if (res.success) {
+      toast.success(res.message);
+      setIsEditOpen(false);
+    } else {
+      toast.error(res.message);
+    }
+  }
+
+
+  useEffect(() => {
+    if (selectedUser) {
+      setName(selectedUser.name);
+      setEmail(selectedUser.email);
+      setPassword("");
+      setConfirmPassword("");
+    }
+  }, [selectedUser])
+
   useEffect(() => {
     fetchAllUser();
   }, [fetchAllUser])
@@ -155,16 +197,16 @@ export default function Users() {
 
       {/* Update User Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
-            <DialogDescription>
-              Perbarui informasi user di sini. Klik simpan setelah selesai.
-            </DialogDescription>
-          </DialogHeader>
+        <form onSubmit={handleUpdateUser}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Edit User</DialogTitle>
+              <DialogDescription>
+                Perbarui informasi user di sini. Klik simpan setelah selesai.
+              </DialogDescription>
+            </DialogHeader>
 
-          <div>
-            <form onSubmit={}>
+            <div>
               <FieldSet>
                 <FieldGroup>
                   <Field>
@@ -202,28 +244,28 @@ export default function Users() {
                   </Field>
                 </FieldGroup>
               </FieldSet>
-            </form>
-          </div>
+            </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditOpen(false)}>Batal</Button>
-            <Button type="submit" onClick={}>Simpan Perubahan</Button>
-          </DialogFooter>
-        </DialogContent>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditOpen(false)}>Batal</Button>
+              <Button type="submit" onClick={handleUpdateUser}>Simpan Perubahan</Button>
+            </DialogFooter>
+          </DialogContent>
+        </form>
       </Dialog>
 
       {/* Create User Dialog */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add New User
-            </DialogTitle>
-            <DialogDescription>
-              Create new user here. Click save when you're done.
-            </DialogDescription>
-          </DialogHeader>
-          <div>
-            <form onSubmit={handleAddUser}>
+        <form onSubmit={handleAddUser}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add New User
+              </DialogTitle>
+              <DialogDescription>
+                Create new user here. Click save when you're done.
+              </DialogDescription>
+            </DialogHeader>
+            <div>
               <FieldSet>
                 <FieldGroup>
                   <Field>
@@ -261,14 +303,13 @@ export default function Users() {
                   </Field>
                 </FieldGroup>
               </FieldSet>
-            </form>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
-            <Button type="submit" onClick={handleAddUser}>Save user</Button>
-          </DialogFooter>
-        </DialogContent>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
+              <Button type="submit" onClick={handleAddUser}>Save user</Button>
+            </DialogFooter>
+          </DialogContent>
+        </form>
       </Dialog>
 
       {/* Delete User Dialoag */}

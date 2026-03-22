@@ -15,7 +15,7 @@ export default function AppHeader() {
 
    }
    return (
-      <div className="px-4 sticky inset-x-0 top-0 py-2 bg-sidebar border-b">
+      <div className="px-4 sticky inset-x-0 top-0 py-2 bg-sidebar border-b z-10">
          <div className="flex items-center justify-end gap-4 lg:justify-between">
             <SidebarTrigger />
             <div className="inline-flex items-center gap-2 sm:gap-5">

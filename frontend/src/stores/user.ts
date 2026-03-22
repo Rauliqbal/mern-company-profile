@@ -31,6 +31,13 @@ interface UserState {
     password: string,
     confirmPassword: string
   ) => Promise<ApiResponse>;
+  updateUser: (
+    id: string,
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ) => Promise<ApiResponse>;
   deleteUser: (id: string) => Promise<ApiResponse>
 }
 
@@ -88,18 +95,46 @@ export const useUserStore = create<UserState>((set) => ({
     }
   },
 
+  updateUser: async (id: string, payload: {
+    name?: string;
+    email?: string;
+    password?: string;
+  }) => {
+    set({ isLoading: true })
+    try {
+      const { data } = await api.patch(`/user/${id}`, payload);
+
+      set((state) => ({
+        allUsers: state.allUsers.map((user) =>
+          user.id === id ? data.data : user
+        ),
+        isLoading: false,
+      }));
+
+      return {
+        success: true,
+        message: data.message,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error?.response?.data?.message || "Update user failed",
+      };
+    }
+  },
+
   deleteUser: async (id: string) => {
-  try {
-    await api.delete(`/user/${id}`);
+    try {
+      await api.delete(`/user/${id}`);
 
-    set((state) => ({
-      allUsers: state.allUsers.filter((user) => user.id !== id),
-    }));
+      set((state) => ({
+        allUsers: state.allUsers.filter((user) => user.id !== id),
+      }));
 
-    return { success: true, message: "User deleted successfully" };
-  } catch (error: any) {
-    return { success: false, message: error?.response?.data?.message || "Failed to delete user" };
-  }
-},
+      return { success: true, message: "User deleted successfully" };
+    } catch (error: any) {
+      return { success: false, message: error?.response?.data?.message || "Failed to delete user" };
+    }
+  },
 
 }));
